@@ -1,0 +1,18 @@
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Editor files
+.vscode/
+.idea/
+
+# Minecraft artifacts
+*.mcaddon
+*.mcpack
+*.mcworld
+!realms-of-myth.mcaddon
+
+# Build artifacts
+*.log

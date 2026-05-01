@@ -1,0 +1,56 @@
+{
+  "format_version": 3,
+  "header": {
+    "name": "pack.name",
+    "description": "pack.description",
+    "uuid": "e46aaa2f-6240-4639-86ec-4875f86a4df7",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      6
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "267e77ea-c497-43b9-91c1-5995dee7c9f2",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "d95a1c27-e66a-4065-9b15-6ea4bb963e55",
+      "entry": "scripts/main.js",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.7.0"
+    },
+    {
+      "module_name": "@minecraft/server-ui",
+      "version": "1.3.0"
+    }
+  ],
+  "metadata": {
+    "authors": [
+      "mealworm12"
+    ],
+    "product_type": "addon"
+  }
+}
