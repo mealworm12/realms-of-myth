@@ -1,0 +1,20 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "realms:class_selector_npc",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/class_selector_npc"
+      },
+      "geometry": {
+        "default": "geometry.realms.class_selector_npc"
+      },
+      "render_controllers": [
+        "controller.render.class_selector_npc"
+      ]
+    }
+  }
+}

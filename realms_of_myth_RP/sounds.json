@@ -1,0 +1,116 @@
+{
+  "entity.dragon_fire.roar": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/dragon_roar",
+        "volume": 1.0,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "entity.dragon_frost.roar": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/dragon_roar",
+        "volume": 1.0,
+        "pitch": 1.2
+      }
+    ]
+  },
+  "entity.dragon_fire.flap": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "sounds/mob/dragon_wing_flap",
+        "volume": 0.7,
+        "pitch": [
+          0.8,
+          1.2
+        ]
+      }
+    ]
+  },
+  "entity.dragon_frost.flap": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "sounds/mob/dragon_wing_flap",
+        "volume": 0.7,
+        "pitch": [
+          1.0,
+          1.4
+        ]
+      }
+    ]
+  },
+  "entity.giant.stomp": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/giant_stomp",
+        "volume": 1.0,
+        "pitch": 0.6
+      }
+    ]
+  },
+  "entity.troll.grunt": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/troll_grunt",
+        "volume": 0.9,
+        "pitch": [
+          0.7,
+          1.1
+        ]
+      }
+    ]
+  },
+  "realms.weapon.sword_swing": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "sounds/weapons/sword_swing",
+        "volume": 0.5
+      }
+    ]
+  },
+  "realms.weapon.staff_cast": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "sounds/weapons/staff_cast",
+        "volume": 0.6
+      }
+    ]
+  },
+  "realms.weapon.bow_release": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "sounds/weapons/bow_release",
+        "volume": 0.4
+      }
+    ]
+  },
+  "realms.ui.class_select_open": {
+    "category": "ui",
+    "sounds": [
+      {
+        "name": "sounds/ui/class_select_open",
+        "volume": 0.8
+      }
+    ]
+  },
+  "realms.ui.ability_ready": {
+    "category": "ui",
+    "sounds": [
+      {
+        "name": "sounds/ui/ability_ready",
+        "volume": 0.5
+      }
+    ]
+  }
+}

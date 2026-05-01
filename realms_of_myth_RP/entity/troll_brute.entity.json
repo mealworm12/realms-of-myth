@@ -1,0 +1,20 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "realms:troll_brute",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/troll_brute"
+      },
+      "geometry": {
+        "default": "geometry.realms.troll_brute"
+      },
+      "render_controllers": [
+        "controller.render.troll_brute"
+      ]
+    }
+  }
+}

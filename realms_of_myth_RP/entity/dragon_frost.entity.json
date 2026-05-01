@@ -1,0 +1,20 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "realms:dragon_frost",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/dragon_frost"
+      },
+      "geometry": {
+        "default": "geometry.realms.dragon_frost"
+      },
+      "render_controllers": [
+        "controller.render.dragon_frost"
+      ]
+    }
+  }
+}

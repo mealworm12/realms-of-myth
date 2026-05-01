@@ -1,0 +1,150 @@
+{
+  "resource_pack_name": "vanilla",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "mythril_sword": {
+      "textures": "textures/items/mythril_sword"
+    },
+    "elven_dagger": {
+      "textures": "textures/items/elven_dagger"
+    },
+    "troll_warhammer": {
+      "textures": "textures/items/troll_warhammer"
+    },
+    "mythril_bow": {
+      "textures": "textures/items/mythril_bow"
+    },
+    "dragon_bone_greatsword": {
+      "textures": "textures/items/dragon_bone_greatsword"
+    },
+    "giant_club": {
+      "textures": "textures/items/giant_club"
+    },
+    "enchanted_bow": {
+      "textures": "textures/items/enchanted_bow"
+    },
+    "dragonslayer_spear": {
+      "textures": "textures/items/dragonslayer_spear"
+    },
+    "magic_staff": {
+      "textures": "textures/items/magic_staff"
+    },
+    "shadowfang_dagger": {
+      "textures": "textures/items/shadowfang_dagger"
+    },
+    "mythril_ingot": {
+      "textures": "textures/items/mythril_ingot"
+    },
+    "dragon_scale": {
+      "textures": "textures/items/dragon_scale"
+    },
+    "dragon_heart": {
+      "textures": "textures/items/dragon_heart"
+    },
+    "fire_essence": {
+      "textures": "textures/items/fire_essence"
+    },
+    "frost_essence": {
+      "textures": "textures/items/frost_essence"
+    },
+    "class_token_mage": {
+      "textures": "textures/items/class_token_mage"
+    },
+    "class_token_ranger": {
+      "textures": "textures/items/class_token_ranger"
+    },
+    "class_token_berserker": {
+      "textures": "textures/items/class_token_berserker"
+    },
+    "class_token_paladin": {
+      "textures": "textures/items/class_token_paladin"
+    },
+    "class_token_druid": {
+      "textures": "textures/items/class_token_druid"
+    },
+    "mythril_helmet": {
+      "textures": "textures/items/mythril_helmet"
+    },
+    "mythril_chestplate": {
+      "textures": "textures/items/mythril_chestplate"
+    },
+    "mythril_leggings": {
+      "textures": "textures/items/mythril_leggings"
+    },
+    "mythril_boots": {
+      "textures": "textures/items/mythril_boots"
+    },
+    "dragonscale_helmet": {
+      "textures": "textures/items/dragonscale_helmet"
+    },
+    "dragonscale_chestplate": {
+      "textures": "textures/items/dragonscale_chestplate"
+    },
+    "dragonscale_leggings": {
+      "textures": "textures/items/dragonscale_leggings"
+    },
+    "dragonscale_boots": {
+      "textures": "textures/items/dragonscale_boots"
+    },
+    "mage_master_helmet": {
+      "textures": "textures/items/mage_master_helmet"
+    },
+    "mage_master_chestplate": {
+      "textures": "textures/items/mage_master_chestplate"
+    },
+    "mage_master_leggings": {
+      "textures": "textures/items/mage_master_leggings"
+    },
+    "mage_master_boots": {
+      "textures": "textures/items/mage_master_boots"
+    },
+    "ranger_master_helmet": {
+      "textures": "textures/items/ranger_master_helmet"
+    },
+    "ranger_master_chestplate": {
+      "textures": "textures/items/ranger_master_chestplate"
+    },
+    "ranger_master_leggings": {
+      "textures": "textures/items/ranger_master_leggings"
+    },
+    "ranger_master_boots": {
+      "textures": "textures/items/ranger_master_boots"
+    },
+    "berserker_master_helmet": {
+      "textures": "textures/items/berserker_master_helmet"
+    },
+    "berserker_master_chestplate": {
+      "textures": "textures/items/berserker_master_chestplate"
+    },
+    "berserker_master_leggings": {
+      "textures": "textures/items/berserker_master_leggings"
+    },
+    "berserker_master_boots": {
+      "textures": "textures/items/berserker_master_boots"
+    },
+    "paladin_master_helmet": {
+      "textures": "textures/items/paladin_master_helmet"
+    },
+    "paladin_master_chestplate": {
+      "textures": "textures/items/paladin_master_chestplate"
+    },
+    "paladin_master_leggings": {
+      "textures": "textures/items/paladin_master_leggings"
+    },
+    "paladin_master_boots": {
+      "textures": "textures/items/paladin_master_boots"
+    },
+    "druid_master_helmet": {
+      "textures": "textures/items/druid_master_helmet"
+    },
+    "druid_master_chestplate": {
+      "textures": "textures/items/druid_master_chestplate"
+    },
+    "druid_master_leggings": {
+      "textures": "textures/items/druid_master_leggings"
+    },
+    "druid_master_boots": {
+      "textures": "textures/items/druid_master_boots"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "flipbook_texture": "textures/blocks/dragon_egg",
+    "atlas_tile": "dragon_egg",
+    "ticks_per_frame": 1,
+    "blend_frames": true,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      2,
+      1
+    ]
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "format_version": "1.10.0",
+  "render_controllers": {
+    "controller.render.dragon_fire": {
+      "geometry": "geometry.realms.dragon_fire",
+      "materials": [
+        {
+          "*": "material.default"
+        }
+      ],
+      "textures": [
+        "textures/entity/dragon_fire"
+      ]
+    },
+    "controller.render.dragon_frost": {
+      "geometry": "geometry.realms.dragon_frost",
+      "materials": [
+        {
+          "*": "material.default"
+        }
+      ],
+      "textures": [
+        "textures/entity/dragon_frost"
+      ]
+    },
+    "controller.render.troll_brute": {
+      "geometry": "geometry.realms.troll_brute",
+      "materials": [
+        {
+          "*": "material.default"
+        }
+      ],
+      "textures": [
+        "textures/entity/troll_brute"
+      ]
+    },
+    "controller.render.giant_colossus": {
+      "geometry": "geometry.realms.giant_colossus",
+      "materials": [
+        {
+          "*": "material.default"
+        }
+      ],
+      "textures": [
+        "textures/entity/giant_colossus"
+      ]
+    },
+    "controller.render.elf_warrior": {
+      "geometry": "geometry.realms.elf_warrior",
+      "materials": [
+        {
+          "*": "material.default"
+        }
+      ],
+      "textures": [
+        "textures/entity/elf_warrior"
+      ]
+    },
+    "controller.render.class_selector_npc": {
+      "geometry": "geometry.realms.class_selector_npc",
+      "materials": [
+        {
+          "*": "material.default"
+        }
+      ],
+      "textures": [
+        "textures/entity/class_selector_npc"
+      ]
+    }
+  }
+}

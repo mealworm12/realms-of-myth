@@ -1,0 +1,20 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "realms:giant_colossus",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/giant_colossus"
+      },
+      "geometry": {
+        "default": "geometry.realms.giant_colossus"
+      },
+      "render_controllers": [
+        "controller.render.giant_colossus"
+      ]
+    }
+  }
+}

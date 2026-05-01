@@ -1,0 +1,20 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "realms:dragon_fire",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/dragon_fire"
+      },
+      "geometry": {
+        "default": "geometry.realms.dragon_fire"
+      },
+      "render_controllers": [
+        "controller.render.dragon_fire"
+      ]
+    }
+  }
+}
