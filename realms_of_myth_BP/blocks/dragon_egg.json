@@ -1,0 +1,27 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "realms:dragon_egg",
+      "menu_category": {
+        "category": "nature"
+      }
+    },
+    "components": {
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 8.0
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 1200.0
+      },
+      "minecraft:light_emission": 5,
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "dragon_egg",
+          "render_method": "opaque"
+        }
+      },
+      "minecraft:display_name": "Dragon Egg"
+    }
+  }
+}

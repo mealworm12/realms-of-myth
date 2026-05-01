@@ -1,0 +1,27 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:dragonslayer_spear_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "  D",
+      " S ",
+      "S  "
+    ],
+    "key": {
+      "D": {
+        "item": "realms:dragon_heart"
+      },
+      "S": {
+        "item": "realms:mythril_sword"
+      }
+    },
+    "result": {
+      "item": "realms:dragonslayer_spear"
+    }
+  }
+}

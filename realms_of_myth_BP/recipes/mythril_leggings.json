@@ -1,0 +1,24 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:mythril_leggings_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "MMM",
+      "M M",
+      "M M"
+    ],
+    "key": {
+      "M": {
+        "item": "realms:mythril_ingot"
+      }
+    },
+    "result": {
+      "item": "realms:mythril_leggings"
+    }
+  }
+}

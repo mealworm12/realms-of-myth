@@ -1,0 +1,37 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:spawn_rules": {
+    "description": {
+      "identifier": "realms:troll_brute",
+      "population_control": "monster"
+    },
+    "conditions": [
+      {
+        "minecraft:spawns_cave": {},
+        "minecraft:brightness_filter": {
+          "min": 0,
+          "max": 7,
+          "adjust_for_weather": true
+        },
+        "minecraft:weight": {
+          "default": 8
+        },
+        "minecraft:difficulty_filter": {},
+        "minecraft:herd": {
+          "min_size": 1,
+          "max_size": 2,
+          "event": "minecraft:entity_born"
+        },
+        "minecraft:biome_filter": {
+          "any_of": [
+            {
+              "test": "has_biome_tag",
+              "operator": "==",
+              "value": "extreme_hills"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

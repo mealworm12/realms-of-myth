@@ -1,0 +1,23 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "realms:enchanted_bow",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:max_stack_size": 1,
+      "minecraft:max_damage": 750,
+      "minecraft:icon": "enchanted_bow",
+      "minecraft:display_name": {
+        "value": "Enchanted Bow"
+      },
+      "minecraft:enchantable": {
+        "value": 30,
+        "slot": "bow"
+      }
+    }
+  }
+}

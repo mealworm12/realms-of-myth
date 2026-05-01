@@ -1,0 +1,20 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "realms:mythril_ingot_from_block"
+    },
+    "tags": [
+      "crafting_table",
+      "furnace"
+    ],
+    "ingredients": [
+      {
+        "item": "realms:mythril_ore"
+      }
+    ],
+    "result": {
+      "item": "realms:mythril_ingot"
+    }
+  }
+}

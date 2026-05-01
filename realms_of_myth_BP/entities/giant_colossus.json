@@ -1,0 +1,75 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "realms:giant_colossus",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "giant",
+          "monster"
+        ]
+      },
+      "minecraft:health": {
+        "value": 120,
+        "max": 120
+      },
+      "minecraft:movement": {
+        "value": 0.2
+      },
+      "minecraft:attack": {
+        "damage": 15
+      },
+      "minecraft:collision_box": {
+        "width": 1.6,
+        "height": 3.6
+      },
+      "minecraft:scale": {
+        "value": 2.0
+      },
+      "minecraft:knockback_resistance": {
+        "value": 0.8
+      },
+      "minecraft:behavior.melee_attack": {
+        "priority": 3,
+        "speed_multiplier": 0.7,
+        "track_target": true
+      },
+      "minecraft:behavior.nearest_attackable_target": {
+        "priority": 2,
+        "entity_types": [
+          {
+            "filters": {
+              "test": "is_family",
+              "subject": "other",
+              "value": "player"
+            },
+            "max_dist": 24
+          }
+        ]
+      },
+      "minecraft:behavior.hurt_by_target": {
+        "priority": 1
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 8,
+        "speed_multiplier": 0.4
+      },
+      "minecraft:loot": {
+        "table": "loot_tables/entities/giant_colossus.json"
+      },
+      "minecraft:boss": {
+        "name": "Giant Colossus",
+        "hud_range": 55
+      },
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": false
+      }
+    }
+  }
+}

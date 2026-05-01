@@ -1,0 +1,24 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:dragonscale_leggings_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "SSS",
+      "S S",
+      "S S"
+    ],
+    "key": {
+      "S": {
+        "item": "realms:dragon_scale"
+      }
+    },
+    "result": {
+      "item": "realms:dragonscale_leggings"
+    }
+  }
+}

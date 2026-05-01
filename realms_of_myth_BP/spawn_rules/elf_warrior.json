@@ -1,0 +1,37 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:spawn_rules": {
+    "description": {
+      "identifier": "realms:elf_warrior",
+      "population_control": "passive"
+    },
+    "conditions": [
+      {
+        "minecraft:spawns_surface": {},
+        "minecraft:brightness_filter": {
+          "min": 0,
+          "max": 7,
+          "adjust_for_weather": true
+        },
+        "minecraft:weight": {
+          "default": 5
+        },
+        "minecraft:difficulty_filter": {},
+        "minecraft:herd": {
+          "min_size": 1,
+          "max_size": 3,
+          "event": "minecraft:entity_born"
+        },
+        "minecraft:biome_filter": {
+          "any_of": [
+            {
+              "test": "has_biome_tag",
+              "operator": "==",
+              "value": "forest"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

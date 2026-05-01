@@ -1,0 +1,33 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:shadowfang_dagger_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      " H",
+      "FD",
+      " M"
+    ],
+    "key": {
+      "H": {
+        "item": "realms:dragon_heart"
+      },
+      "F": {
+        "item": "realms:frost_essence"
+      },
+      "D": {
+        "item": "realms:elven_dagger"
+      },
+      "M": {
+        "item": "realms:mythril_ingot"
+      }
+    },
+    "result": {
+      "item": "realms:shadowfang_dagger"
+    }
+  }
+}

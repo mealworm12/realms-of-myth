@@ -1,0 +1,72 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "realms:dragon_frost",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": true
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "dragon",
+          "boss",
+          "monster"
+        ]
+      },
+      "minecraft:health": {
+        "value": 350,
+        "max": 350
+      },
+      "minecraft:movement": {
+        "value": 0.24
+      },
+      "minecraft:movement.fly": {
+        "value": 0.14
+      },
+      "minecraft:attack": {
+        "damage": 14
+      },
+      "minecraft:collision_box": {
+        "width": 3.0,
+        "height": 2.5
+      },
+      "minecraft:scale": {
+        "value": 2.0
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1.0
+      },
+      "minecraft:boss": {
+        "name": "Frost Dragon",
+        "hud_range": 80
+      },
+      "minecraft:behavior.nearest_attackable_target": {
+        "priority": 2,
+        "entity_types": [
+          {
+            "filters": {
+              "test": "is_family",
+              "subject": "other",
+              "value": "player"
+            },
+            "max_dist": 64
+          }
+        ]
+      },
+      "minecraft:behavior.hurt_by_target": {
+        "priority": 1
+      },
+      "minecraft:loot": {
+        "table": "loot_tables/entities/dragon_frost.json"
+      },
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": false
+      },
+      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:conditional_bandwidth_optimization": {}
+    }
+  }
+}

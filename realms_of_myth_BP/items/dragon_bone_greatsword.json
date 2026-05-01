@@ -1,0 +1,25 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "realms:dragon_bone_greatsword",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:max_stack_size": 1,
+      "minecraft:max_damage": 2200,
+      "minecraft:damage": 12,
+      "minecraft:enchantable": {
+        "value": 15,
+        "slot": "sword"
+      },
+      "minecraft:icon": "dragon_bone_greatsword",
+      "minecraft:display_name": {
+        "value": "Dragon Bone Greatsword"
+      },
+      "minecraft:hand_equipped": true
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:elven_dagger_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      " M",
+      "S "
+    ],
+    "key": {
+      "M": {
+        "item": "realms:mythril_ingot"
+      },
+      "S": {
+        "item": "minecraft:stick"
+      }
+    },
+    "result": {
+      "item": "realms:elven_dagger"
+    }
+  }
+}

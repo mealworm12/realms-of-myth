@@ -1,0 +1,19 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "realms:mythril_ingot",
+          "weight": 100
+        },
+        {
+          "type": "item",
+          "name": "minecraft:iron_nugget",
+          "weight": 25
+        }
+      ]
+    }
+  ]
+}

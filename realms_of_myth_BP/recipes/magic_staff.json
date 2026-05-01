@@ -1,0 +1,30 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:magic_staff_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      " FH",
+      " SF",
+      "S  "
+    ],
+    "key": {
+      "H": {
+        "item": "realms:dragon_heart"
+      },
+      "F": {
+        "item": "realms:fire_essence"
+      },
+      "S": {
+        "item": "minecraft:stick"
+      }
+    },
+    "result": {
+      "item": "realms:magic_staff"
+    }
+  }
+}
