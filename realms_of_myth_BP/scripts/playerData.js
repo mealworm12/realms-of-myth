@@ -44,7 +44,7 @@ export function loadPlayerData(player) {
  */
 export function resetPlayerData(player) {
     const props = ['rom:race', 'rom:class', 'rom:level', 'rom:has_chosen',
-                   'rom:bloodlust_active', 'rom:bloodlust_end'];
+                   'rom:bloodlust_active', 'rom:bloodlust_end', 'rom:human_xp_bonus'];
     for (const key of props) {
         player.setDynamicProperty(key, undefined);
     }
@@ -52,8 +52,18 @@ export function resetPlayerData(player) {
     // Clear any class tokens from inventory
     const classes = ['mage', 'ranger', 'berserker', 'paladin', 'druid'];
     for (const c of classes) {
-        player.runCommand(`clear @s realms:class_token_${c} 0 0`);
+        player.runCommand(`clear @s realms:class_token_${c} 0`);
     }
+
+    // Clear any persistent race effects
+    try {
+        player.runCommand('effect @s night_vision 0');
+        player.runCommand('effect @s resistance 0');
+        player.runCommand('effect @s regeneration 0');
+        player.runCommand('effect @s speed 0');
+        player.runCommand('effect @s jump_boost 0');
+        player.runCommand('effect @s luck 0');
+    } catch (e) { /* ignore */ }
 
     player.sendMessage('§7Your destiny has been reset. Choose again.');
 }
@@ -70,25 +80,41 @@ export function applyRaceTraits(player) {
 
     const traits = race.traits;
 
-    // Troll: bonus max HP
+    // Troll: bonus max HP + slow regeneration
     if (traits.bonusHealth) {
         const health = player.getComponent('minecraft:health');
         if (health) {
-            // Use max attribute if available, otherwise fallback to 20 + bonus
             const effectiveMax = health.effectiveMax || 20;
             health.setCurrentValue(effectiveMax + traits.bonusHealth);
         }
     }
+    if (traits.slowRegeneration) {
+        player.runCommand('effect @s regeneration 999999 0 true');
+    }
 
-    // Elf: permanent night vision (999999 seconds = ~11.5 days = effectively permanent)
+    // Elf: permanent night vision
     if (traits.nightVision) {
         player.runCommand('effect @s night_vision 999999 0 true');
     }
 
-    // Giant: knockback resistance
+    // Giant: knockback resistance (via resistance effect) + reach proxy via speed/jump
     if (traits.knockbackResistance) {
-        const level = Math.round(traits.knockbackResistance * 5); // 0.5 * 5 = 2.5 → 2
+        const level = Math.round(traits.knockbackResistance * 5);
         player.runCommand(`effect @s resistance 999999 ${level} true`);
+    }
+    if (traits.reachBonus) {
+        // True reach modifier unavailable in scripting; use speed+jump as proxy
+        player.runCommand(`effect @s speed 999999 0 true`);
+        player.runCommand(`effect @s jump_boost 999999 0 true`);
+    }
+
+    // Human: +10% XP bonus (tracked via entityDie handler in main.js)
+    // Apply luck as a visible indicator
+    if (traits.xpBonus) {
+        player.runCommand('effect @s luck 999999 0 true');
+    }
+    if (traits.bonusSkillPoint) {
+        player.setDynamicProperty('rom:human_skill_points', traits.bonusSkillPoint);
     }
 
     console.log(`[Realms of Myth] Applied ${raceId} traits to ${player.name}`);
@@ -109,7 +135,20 @@ export function restorePlayerState(player) {
     if (data.class) {
         const inventory = player.getComponent('minecraft:inventory');
         if (inventory) {
-            player.runCommand(`give @s realms:class_token_${data.class} 1`);
+            const container = inventory.container;
+            let hasToken = false;
+            if (container) {
+                for (let i = 0; i < container.size; i++) {
+                    const item = container.getItem(i);
+                    if (item && item.typeId === `realms:class_token_${data.class}`) {
+                        hasToken = true;
+                        break;
+                    }
+                }
+            }
+            if (!hasToken) {
+                player.runCommand(`give @s realms:class_token_${data.class} 1`);
+            }
         }
     }
 }

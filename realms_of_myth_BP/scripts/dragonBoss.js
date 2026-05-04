@@ -19,11 +19,34 @@ const dragonWhelps = new Map();
  * Register dragon boss AI. Call once during mod init.
  */
 export function registerDragonAI() {
+    // Process dragons every 40 ticks (2 seconds)
     system.runInterval(() => {
-        // Only run every 40 ticks (2 seconds)
-        if (system.currentTick % 40 !== 0) return;
         checkAllDragons();
-    }, 1);
+    }, 40);
+
+    // ── Clean up maps when a dragon dies ──────────────────
+    world.afterEvents.entityDie.subscribe((event) => {
+        const entity = event.deadEntity;
+        if (!entity) return;
+        const type = entity.typeId;
+        if (type !== 'realms:dragon_fire' && type !== 'realms:dragon_frost') return;
+
+        const did = entity.id;
+        // Remove from managedDragons
+        managedDragons.delete(did);
+        // Kill all whelps associated with this dragon
+        if (dragonWhelps.has(did)) {
+            const wids = dragonWhelps.get(did);
+            const dim = entity.dimension;
+            for (const wid of wids) {
+                try {
+                    const w = dim.getEntity(wid);
+                    if (w && w.isValid()) w.remove();
+                } catch (e) {}
+            }
+            dragonWhelps.delete(did);
+        }
+    });
 }
 
 /**
@@ -37,7 +60,9 @@ function checkAllDragons() {
                 try {
                     const dragons = dim.getEntities({ type: type });
                     for (const dragon of dragons) {
-                        processDragon(dragon, dim);
+                        if (dragon.isValid()) {
+                            processDragon(dragon, dim);
+                        }
                     }
                 } catch (e) {
                     // Entity iteration can fail in unloaded chunks
@@ -46,6 +71,28 @@ function checkAllDragons() {
         }
     } catch (e) {
         // Dimension may not be loaded
+    }
+
+    // Prune dead entries from managedDragons
+    for (const [did, data] of managedDragons) {
+        let alive = false;
+        for (const dimName of ['overworld', 'nether']) {
+            try {
+                const dim = world.getDimension(dimName);
+                const e = dim.getEntity(did);
+                if (e && e.isValid() && (e.typeId === 'realms:dragon_fire' || e.typeId === 'realms:dragon_frost')) {
+                    alive = true;
+                    break;
+                }
+            } catch (e) {}
+        }
+        if (!alive) {
+            // Dragon is dead/despawned — clean up whelps and managed entry
+            if (dragonWhelps.has(did)) {
+                dragonWhelps.delete(did);
+            }
+            managedDragons.delete(did);
+        }
     }
 }
 
@@ -110,7 +157,6 @@ function announcePhase(dragon, phase, dim) {
             break;
     }
 
-    // Broadcast to all players
     for (const player of world.getPlayers()) {
         player.sendMessage(msg);
     }
@@ -122,12 +168,10 @@ function announcePhase(dragon, phase, dim) {
 // ═══════════════════════════════════════════════════════════
 
 function executeGroundPhase(dragon, dim) {
-    // Clear flight effects on transition back to ground
     try { dragon.runCommand('effect @s levitation 0 0'); } catch (e) {}
 
     const roll = Math.random();
     if (roll < 0.04) {
-        // Breath attack: damage nearby players
         const dmg = dragon.typeId === 'realms:dragon_fire' ? 8 : 6;
         dim.runCommand(`effect @p[r=8] instant_damage 1 ${Math.round(dmg / 3)} true`);
         dim.runCommand(`execute at @e[type=${dragon.typeId},c=1] run particle minecraft:dragon_destroy_block ~ ~2 ~`);
@@ -139,16 +183,13 @@ function executeGroundPhase(dragon, dim) {
 // ═══════════════════════════════════════════════════════════
 
 function executeAerialPhase(dragon, dim) {
-    // Maintain flight
     try { dragon.runCommand('effect @s levitation 40 8 true'); } catch (e) {}
 
     const roll = Math.random();
     if (roll < 0.03) {
-        // Aerial breath strafe
         dim.runCommand(`effect @p[r=12] instant_damage 1 2 true`);
         dim.runCommand(`execute at @e[type=${dragon.typeId},c=1] run particle minecraft:dragon_destroy_block ~ ~1 ~`);
     } else if (roll < 0.06) {
-        // Dive bomb: pick nearest player
         const players = world.getPlayers();
         if (players.length > 0) {
             const nearest = players.reduce((best, p) => {
@@ -173,13 +214,11 @@ function executeEnragedPhase(dragon, dim, dragonId) {
     const roll = Math.random();
 
     if (roll < 0.05) {
-        // Cataclysm: large AoE
         dim.runCommand(`effect @p[r=20] instant_damage 1 3 true`);
         dim.runCommand(`execute at @e[type=${dragon.typeId},c=1] run particle minecraft:huge_explosion_emitter ~~~`);
         dim.runCommand(`playsound ambient.weather.thunder @a ~~~ 1 0`);
     }
 
-    // Always maintain whelps in enraged phase
     maintainWhelps(dragon, dim, dragonId);
 }
 
@@ -196,13 +235,12 @@ function spawnWhelps(dragon, dim) {
         for (const wid of dragonWhelps.get(dragonId)) {
             try {
                 const w = dim.getEntity(wid);
-                if (w) w.remove();
+                if (w && w.isValid()) w.remove();
             } catch (e) {}
         }
     }
     dragonWhelps.set(dragonId, []);
 
-    // Spawn 3 in a circle around the dragon
     for (let i = 0; i < 3; i++) {
         const angle = (i / 3) * Math.PI * 2;
         const whelp = dim.spawnEntity('realms:dragon_whelp', {
@@ -222,15 +260,14 @@ function maintainWhelps(dragon, dim, dragonId) {
     for (const wid of whelps) {
         try {
             const w = dim.getEntity(wid);
-            if (w && w.getComponent('minecraft:health')?.currentValue > 0) {
+            if (w && w.isValid() && w.getComponent('minecraft:health')?.currentValue > 0) {
                 alive.push(wid);
             }
         } catch (e) {}
     }
 
-    // Respawn missing whelps
     const missing = 3 - alive.length;
-    if (missing > 0 && dragon) {
+    if (missing > 0 && dragon && dragon.isValid()) {
         const loc = dragon.location;
         for (let i = 0; i < missing; i++) {
             const whelp = dim.spawnEntity('realms:dragon_whelp', {

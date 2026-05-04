@@ -27,6 +27,22 @@
             "repair_amount": 250
           }
         ]
+      },
+      "minecraft:hand_equipped": true,
+      "minecraft:use_modifiers": {
+        "use_duration": 1.5
+      },
+      "minecraft:shooter": {
+        "ammunition": [
+          {
+            "item": "minecraft:arrow",
+            "search_inventory": true,
+            "use_in_creative": true
+          }
+        ],
+        "max_draw_duration": 1.5,
+        "scale_power_by_draw_duration": true,
+        "charge_on_draw": false
       }
     }
   }

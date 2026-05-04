@@ -2,7 +2,7 @@
   "format_version": "1.21.60",
   "minecraft:spawn_rules": {
     "description": {
-      "identifier": "realms:dragon_fire",
+      "identifier": "realms:dragon_frost",
       "population_control": "monster"
     },
     "conditions": [
@@ -14,7 +14,7 @@
           "adjust_for_weather": true
         },
         "minecraft:weight": {
-          "default": 50
+          "default": 45
         },
         "minecraft:difficulty_filter": {},
         "minecraft:herd": {
@@ -27,7 +27,17 @@
             {
               "test": "has_biome_tag",
               "operator": "==",
-              "value": "mesa"
+              "value": "ice_spikes"
+            },
+            {
+              "test": "has_biome_tag",
+              "operator": "==",
+              "value": "frozen"
+            },
+            {
+              "test": "has_biome_tag",
+              "operator": "==",
+              "value": "tundra"
             },
             {
               "test": "has_biome_tag",

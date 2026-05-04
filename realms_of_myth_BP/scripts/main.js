@@ -7,7 +7,7 @@ import { world, system, Player } from '@minecraft/server';
 import { CLASSES } from './classSystem.js';
 import { restorePlayerState, resetPlayerData } from './playerData.js';
 import { showClassSelectionForm } from './classSelection.js';
-import { registerAbilities } from './abilities.js';
+import { registerAbilities, clearCooldowns } from './abilities.js';
 import { registerDragonAI } from './dragonBoss.js';
 
 console.log('[Realms of Myth] Initializing...');
@@ -42,6 +42,47 @@ world.afterEvents.playerJoin.subscribe((event) => {
                 ]
             });
         }, 40);
+    }
+});
+
+// ── Player Leave cleanup ─────────────────────────────────
+world.afterEvents.playerLeave.subscribe((event) => {
+    clearCooldowns(event.playerId);
+});
+
+// ── Entity Interact (Altar & Oracle) ─────────────────────
+world.afterEvents.playerInteractWithEntity.subscribe((event) => {
+    const player = event.player;
+    const target = event.target;
+    if (!target) return;
+
+    const typeId = target.typeId;
+
+    // Oracle / Elf Warrior interaction
+    if (typeId === 'realms:elf_warrior') {
+        const raceTag = player.getDynamicProperty('rom:race');
+        if (raceTag) {
+            player.sendMessage('§7The Oracle remembers you, brave adventurer. Use §e!reset §7to begin anew.');
+        } else {
+            player.sendMessage('§eThe Oracle beckons... Type §a!class §eto choose your destiny.');
+        }
+    }
+});
+
+// ── Block Interact (Ancient Altar) ───────────────────────
+world.afterEvents.playerInteractWithBlock.subscribe((event) => {
+    const player = event.player;
+    const block = event.block;
+    if (!block) return;
+
+    if (block.typeId === 'realms:ancient_altar') {
+        const raceTag = player.getDynamicProperty('rom:race');
+        if (!raceTag) {
+            player.sendMessage('§6§lThe Ancient Altar hums with energy...');
+            system.runTimeout(() => showClassSelectionForm(player), 10);
+        } else {
+            player.sendMessage('§7The Altar recognizes your spirit. Use §e!classinfo §7to review your abilities.');
+        }
     }
 });
 

@@ -62,6 +62,17 @@
       "minecraft:loot": {
         "table": "loot_tables/entities/dragon_fire.json"
       },
+      "minecraft:ambient_sound": {
+        "sound": "entity.dragon_fire.roar",
+        "interval": 200,
+        "range": 24.0
+      },
+      "minecraft:hurt_sound": {
+        "sound": "mob.enderdragon.hit"
+      },
+      "minecraft:death_sound": {
+        "sound": "mob.enderdragon.death"
+      },
       "minecraft:physics": {},
       "minecraft:pushable": {
         "is_pushable": false

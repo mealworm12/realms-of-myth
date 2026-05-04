@@ -29,22 +29,6 @@
         "width": 0.6,
         "height": 1.9
       },
-      "minecraft:damage_sensor": {
-        "triggers": [
-          {
-            "on_damage": {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "player"
-              }
-            }
-          },
-          {
-            "cause": "all"
-          }
-        ]
-      },
       "minecraft:behavior.look_at_player": {
         "look_distance": 8.0,
         "probability": 0.02
@@ -68,12 +52,23 @@
               },
               "event": "realms:player_interact",
               "target": "self"
+            },
+            "interact_text": "§eSpeak with The Oracle",
+            "swing": true,
+            "play_sounds": "random.orb",
+            "spawn_items": {
+              "table": "loot_tables/empty"
             }
           }
         ]
       },
       "minecraft:equipment": {
         "table": "loot_tables/entities/elf_warrior_equipment.json"
+      },
+      "minecraft:ambient_sound": {
+        "sound": "mob.villager.ambient",
+        "interval": 100,
+        "range": 8.0
       },
       "minecraft:physics": {},
       "minecraft:pushable": {
@@ -84,11 +79,12 @@
     },
     "events": {
       "realms:player_interact": {
-        "randomize": [
-          {
-            "weight": 100
-          }
-        ]
+        "run_command": {
+          "command": [
+            "titleraw @p actionbar {\"rawtext\":[{\"text\":\"§eThe Oracle says: Find your destiny. Use §a!class §eto begin.\"}]}"
+          ],
+          "target": "other"
+        }
       },
       "minecraft:entity_spawned": {}
     }

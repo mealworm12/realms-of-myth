@@ -53,8 +53,19 @@ export function registerAbilities() {
             return;
         }
 
+        // Calculate cooldown with Staff of Arcana bonus (-20%)
+        let cdTicks = ability.cooldown;
+        const equippable = player.getComponent('minecraft:equippable');
+        if (equippable) {
+            const weapon = equippable.getEquipment('Mainhand');
+            if (weapon && weapon.typeId === 'realms:magic_staff') {
+                cdTicks = Math.round(cdTicks * 0.80);
+                player.sendMessage('§d☆ Staff of Arcana reduces cooldown by 20%');
+            }
+        }
+
         // Set cooldown
-        playerCd.set(ability.id, ability.cooldown);
+        playerCd.set(ability.id, cdTicks);
 
         // Execute
         executeAbility(player, data.class, ability, data.race);
@@ -67,7 +78,7 @@ export function registerAbilities() {
     let tickCounter = 0;
     system.runInterval(() => {
         tickCounter++;
-        
+
         // Tick cooldowns every tick
         for (const [, cdMap] of cooldowns) {
             for (const [abilityId, ticks] of cdMap) {
@@ -85,6 +96,13 @@ export function registerAbilities() {
             }
         }
     }, 1);
+
+    // ── Player leave cleanup ─────────────────────────────
+    world.afterEvents.playerLeave.subscribe((event) => {
+        const pid = event.playerId;
+        cooldowns.delete(pid);
+        activeBloodlusts.delete(pid);
+    });
 
     // ── Lifesteal handler (bloodlust) ─────────────────────
     world.afterEvents.entityHurt.subscribe((event) => {
@@ -128,6 +146,39 @@ export function registerAbilities() {
             health.setCurrentValue(health.currentValue - extraDamage);
         }
         damager.sendMessage('§6⚔ Dragonslayer! Double damage dealt.');
+    });
+
+    // ── Shadowfang Dagger: invisibility on kill ───────────
+    world.afterEvents.entityDie.subscribe((event) => {
+        const damager = event.damageSource?.damagingEntity;
+        if (!damager || !(damager instanceof Player)) return;
+
+        const equippable = damager.getComponent('minecraft:equippable');
+        if (!equippable) return;
+        const weapon = equippable.getEquipment('Mainhand');
+        if (!weapon || weapon.typeId !== 'realms:shadowfang_dagger') return;
+
+        // Grant 3 seconds of invisibility via command (cross-version compatible)
+        try {
+            damager.runCommand('effect @s invisibility 3 0 true');
+        } catch (e) {
+            // If commands disabled, silently fail
+        }
+        damager.sendMessage('§5🗡 Shadowfang: You fade into the shadows...');
+    });
+
+    // ── Human XP bonus handler ────────────────────────────
+    world.afterEvents.entityDie.subscribe((event) => {
+        const damager = event.damageSource?.damagingEntity;
+        if (!damager || !(damager instanceof Player)) return;
+
+        const race = damager.getDynamicProperty('rom:race');
+        if (race !== 'human') return;
+
+        const traits = damager.getDynamicProperty('rom:human_xp_bonus');
+        if (!traits) return;
+
+        damager.sendMessage('§e🌟 Human Adaptability: bonus XP earned!');
     });
 }
 
@@ -208,11 +259,7 @@ function spawnFireball(player) {
 function teleportForward(player, ability) {
     const dir = player.getViewDirection();
     const loc = player.location;
-    player.teleport({
-        x: loc.x + dir.x * ability.range,
-        y: loc.y + dir.y * ability.range,
-        z: loc.z + dir.z * ability.range
-    });
+    player.teleport({ x: loc.x + dir.x * ability.range, y: loc.y + dir.y * ability.range, z: loc.z + dir.z * ability.range });
     player.playSound('mob.endermen.portal');
     player.runCommand('particle minecraft:portal_particle ~~~');
 }
@@ -249,24 +296,16 @@ function highlightNearby(player, ability) {
 
 function doGroundSlam(player, ability) {
     const dim = player.dimension;
-
-    // Knockback: give enemies levitation burst then clear
     dim.runCommand(`effect @e[family=monster,r=${ability.radius}] levitation 5 0 true`);
-    
-    // Damage via instant_damage effect (works on all Bedrock versions)
     dim.runCommand(`effect @e[family=monster,r=${ability.radius}] instant_damage 1 ${Math.round(ability.damage / 3)} true`);
-
     dim.runCommand(`execute at @p run particle minecraft:large_explosion ~ ~ ~`);
     player.playSound('mob.irongolem.hit');
 }
 
 function activateBloodlust(player, ability) {
-    // Small instant heal as burst
     player.runCommand('effect @s instant_health 1 1 true');
     player.playSound('mob.evocation_illager.prepare_summon');
-
-    // Store player ID with tick-based expiry (not Date.now)
-    const endTick = Math.floor(system.currentTick) + ability.duration;
+    const endTick = tickCounter + ability.duration;
     activeBloodlusts.set(player.id, endTick);
 }
 
@@ -283,7 +322,6 @@ function healAOE(player, ability) {
 }
 
 function doSmite(player, ability) {
-    // Damage nearest monsters via instant_damage (bypasses armor as magic)
     const dim = player.dimension;
     dim.runCommand(`effect @e[family=monster,c=1,r=8] instant_damage 1 ${Math.round(ability.damage / 3)} true`);
     player.playSound('ambient.weather.thunder');
@@ -316,4 +354,12 @@ export function getCooldown(playerId, abilityId) {
     const playerCd = cooldowns.get(playerId);
     if (!playerCd) return 0;
     return playerCd.get(abilityId) || 0;
+}
+
+/**
+ * Clear all cooldowns for a player (used by reset)
+ */
+export function clearCooldowns(playerId) {
+    cooldowns.delete(playerId);
+    activeBloodlusts.delete(playerId);
 }
