@@ -1,35 +1,20 @@
 {
-  "format_version": 3,
+  "format_version": 2,
   "header": {
     "name": "pack.name",
     "description": "pack.description",
     "uuid": "5257d9e3-004a-4f9d-a819-a47f722a6574",
-    "version": [
-      1,
-      0,
-      0
-    ],
-    "min_engine_version": [
-      1,
-      21,
-      0
-    ]
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 21, 0]
   },
   "modules": [
     {
       "type": "resources",
       "uuid": "89f2da5c-05d5-4437-8605-69f5714d4413",
-      "version": [
-        1,
-        0,
-        0
-      ]
+      "version": [1, 0, 0]
     }
   ],
   "metadata": {
-    "authors": [
-      "mealworm12"
-    ],
-    "product_type": "addon"
+    "authors": ["mealworm12"]
   }
 }

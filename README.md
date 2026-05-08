@@ -11,7 +11,8 @@
 
 A fantasy Minecraft add-on featuring playable races, class-based abilities with cooldowns, multi-phase dragon boss battles, and four tiers of fantasy weapons & armor — all in a single double-click `.mcaddon` package.
 
-**Compatible with:** Minecraft Education Edition v1.21.06+ & Bedrock Edition v1.21.60+
+**Compatible with:** Minecraft Education Edition v1.21.06+ & Bedrock Edition v1.21.60+  
+*Manifests use `format_version: 2` for cross-platform compatibility. API versions pinned to `@minecraft/server` 2.4.0 and `@minecraft/server-ui` 1.2.0 for Education Edition support.*
 
 ---
 
@@ -22,8 +23,10 @@ A fantasy Minecraft add-on featuring playable races, class-based abilities with 
 |------|---------------|
 | **Elf** | +20% bow damage, permanent night vision |
 | **Troll** | +4 HP (24 total), slow regeneration |
-| **Giant** | 50% knockback resistance, +2 block reach |
+| **Giant** | 50% knockback resistance, +2 block reach* |
 | **Human** | +10% XP gain, +1 skill point |
+
+> \* *Giant reach: Minecraft Bedrock scripting API does not expose entity reach as a modifiable attribute. +2 reach is proxied via permanent Speed I and Jump Boost I effects to simulate a larger presence — enabling faster gap-closing in combat and higher terrain traversal.*
 
 ### ⚔️ 5 Classes — 15 Unique Abilities
 | Class | Ability 1 (☆) | Ability 2 (🔥) | Ability 3 (💧) |
@@ -102,7 +105,7 @@ A fantasy Minecraft add-on featuring playable races, class-based abilities with 
 ```
 realms-of-myth/
 ├── realms_of_myth_BP/          ← Behavior Pack (game logic)
-│   ├── manifest.json           ← @minecraft/server 2.7.0 + @minecraft/server-ui 1.3.0
+│   ├── manifest.json           ← @minecraft/server 2.4.0 + @minecraft/server-ui 1.2.0
 │   ├── scripts/                 ← 7 JavaScript modules (~2,500 lines)
 │   │   ├── main.js             ← Entry point, chat commands, event hooks
 │   │   ├── classSystem.js      ← All race/class/ability data definitions

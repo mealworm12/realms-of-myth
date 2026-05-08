@@ -9,7 +9,7 @@ import { loadPlayerData } from './playerData.js';
 
 // Cooldowns: playerId -> { abilityId: remainingTicks }
 const cooldowns = new Map();
-// Track which players have bloodlust active: playerId -> endTick
+// Track which players have bloodlust active: playerId -> endTick (system.currentTick)
 const activeBloodlusts = new Map();
 
 /**
@@ -75,10 +75,7 @@ export function registerAbilities() {
     });
 
     // ── Cooldown tick processing ──────────────────────────
-    let tickCounter = 0;
     system.runInterval(() => {
-        tickCounter++;
-
         // Tick cooldowns every tick
         for (const [, cdMap] of cooldowns) {
             for (const [abilityId, ticks] of cdMap) {
@@ -87,8 +84,8 @@ export function registerAbilities() {
         }
 
         // Check bloodlust expiry every 10 ticks
-        if (tickCounter % 10 === 0) {
-            const currentTick = tickCounter;
+        if (system.currentTick % 10 === 0) {
+            const currentTick = system.currentTick;
             for (const [playerId, endTick] of activeBloodlusts) {
                 if (currentTick >= endTick) {
                     activeBloodlusts.delete(playerId);
@@ -104,81 +101,95 @@ export function registerAbilities() {
         activeBloodlusts.delete(pid);
     });
 
-    // ── Lifesteal handler (bloodlust) ─────────────────────
-    world.afterEvents.entityHurt.subscribe((event) => {
-        if (!event.damageSource?.damagingEntity) return;
-        const damager = event.damageSource.damagingEntity;
-        if (!(damager instanceof Player)) return;
-
-        if (!activeBloodlusts.has(damager.id)) return;
-
-        const healAmount = Math.ceil(event.damage * 0.30);
-        const health = damager.getComponent('minecraft:health');
-        if (health) {
-            health.setCurrentValue(Math.min(
-                health.currentValue + healAmount,
-                health.effectiveMax
-            ));
-        }
-    });
-
-    // ── Dragonslayer handler ──────────────────────────────
+    // ── Entity Hurt Handler (lifesteal + dragonslayer) ────
     world.afterEvents.entityHurt.subscribe((event) => {
         if (!event.damageSource?.damagingEntity) return;
         const damager = event.damageSource.damagingEntity;
         const victim = event.hurtEntity;
+
+        // --- Lifesteal (bloodlust) ---
+        if (damager instanceof Player && activeBloodlusts.has(damager.id)) {
+            const healAmount = Math.ceil(event.damage * 0.30);
+            const health = damager.getComponent('minecraft:health');
+            if (health) {
+                health.setCurrentValue(Math.min(
+                    health.currentValue + healAmount,
+                    health.effectiveMax
+                ));
+            }
+        }
+
+        // --- Dragonslayer Spear: double damage vs dragons ---
+        if (damager instanceof Player) {
+            const family = victim.getComponent('minecraft:type_family');
+            if (!family || !family.hasType('dragon')) return;
+
+            const equippable = damager.getComponent('minecraft:equippable');
+            if (!equippable) return;
+            const weapon = equippable.getEquipment('Mainhand');
+            if (!weapon || weapon.typeId !== 'realms:dragonslayer_spear') return;
+
+            const extraDamage = event.damage;
+            const vHealth = victim.getComponent('minecraft:health');
+            if (vHealth) {
+                vHealth.setCurrentValue(vHealth.currentValue - extraDamage);
+            }
+            damager.sendMessage('§6⚔ Dragonslayer! Double damage dealt.');
+        }
+    });
+
+    // ── Entity Die Handler (shadowfang + human XP + elf bow bonus) ─
+    world.afterEvents.entityDie.subscribe((event) => {
+        const damager = event.damageSource?.damagingEntity;
+        if (!damager || !(damager instanceof Player)) return;
+
+        const equippable = damager.getComponent('minecraft:equippable');
+
+        // --- Shadowfang Dagger: invisibility on kill ---
+        if (equippable) {
+            const weapon = equippable.getEquipment('Mainhand');
+            if (weapon && weapon.typeId === 'realms:shadowfang_dagger') {
+                try {
+                    damager.runCommand('effect @s invisibility 3 0 true');
+                } catch (e) {
+                    // If commands disabled, silently fail
+                }
+                damager.sendMessage('§5🗡 Shadowfang: You fade into the shadows...');
+            }
+        }
+
+        // --- Human XP bonus ---
+        const race = damager.getDynamicProperty('rom:race');
+        if (race === 'human') {
+            const xpBonus = damager.getDynamicProperty('rom:human_skill_points');
+            if (xpBonus) {
+                damager.sendMessage('§e🌟 Human Adaptability: bonus XP earned!');
+            }
+        }
+    });
+
+    // ── Elf Bow Damage Bonus Handler ──────────────────────
+    world.afterEvents.entityHurt.subscribe((event) => {
+        if (!event.damageSource?.damagingEntity) return;
+        const damager = event.damageSource.damagingEntity;
         if (!(damager instanceof Player)) return;
 
-        // Check if victim is dragon-type
-        const family = victim.getComponent('minecraft:type_family');
-        if (!family || !family.hasType('dragon')) return;
-
-        // Check for dragonslayer weapon
-        const equippable = damager.getComponent('minecraft:equippable');
-        if (!equippable) return;
-        const weapon = equippable.getEquipment('Mainhand');
-        if (!weapon || weapon.typeId !== 'realms:dragonslayer_spear') return;
-
-        // Double damage
-        const extraDamage = event.damage;
-        const health = victim.getComponent('minecraft:health');
-        if (health) {
-            health.setCurrentValue(health.currentValue - extraDamage);
-        }
-        damager.sendMessage('§6⚔ Dragonslayer! Double damage dealt.');
-    });
-
-    // ── Shadowfang Dagger: invisibility on kill ───────────
-    world.afterEvents.entityDie.subscribe((event) => {
-        const damager = event.damageSource?.damagingEntity;
-        if (!damager || !(damager instanceof Player)) return;
-
-        const equippable = damager.getComponent('minecraft:equippable');
-        if (!equippable) return;
-        const weapon = equippable.getEquipment('Mainhand');
-        if (!weapon || weapon.typeId !== 'realms:shadowfang_dagger') return;
-
-        // Grant 3 seconds of invisibility via command (cross-version compatible)
-        try {
-            damager.runCommand('effect @s invisibility 3 0 true');
-        } catch (e) {
-            // If commands disabled, silently fail
-        }
-        damager.sendMessage('§5🗡 Shadowfang: You fade into the shadows...');
-    });
-
-    // ── Human XP bonus handler ────────────────────────────
-    world.afterEvents.entityDie.subscribe((event) => {
-        const damager = event.damageSource?.damagingEntity;
-        if (!damager || !(damager instanceof Player)) return;
+        // Only applies to projectile (bow) damage from Elf players
+        const cause = event.damageSource.cause;
+        if (cause !== 'projectile') return;
 
         const race = damager.getDynamicProperty('rom:race');
-        if (race !== 'human') return;
+        if (race !== 'elf') return;
 
-        const traits = damager.getDynamicProperty('rom:human_xp_bonus');
-        if (!traits) return;
+        const bonus = damager.getDynamicProperty('rom:bow_damage_bonus');
+        if (!bonus) return;
 
-        damager.sendMessage('§e🌟 Human Adaptability: bonus XP earned!');
+        const extraDamage = Math.ceil(event.damage * bonus);
+        const victim = event.hurtEntity;
+        const vHealth = victim.getComponent('minecraft:health');
+        if (vHealth && extraDamage > 0) {
+            vHealth.setCurrentValue(vHealth.currentValue - extraDamage);
+        }
     });
 }
 
@@ -305,7 +316,7 @@ function doGroundSlam(player, ability) {
 function activateBloodlust(player, ability) {
     player.runCommand('effect @s instant_health 1 1 true');
     player.playSound('mob.evocation_illager.prepare_summon');
-    const endTick = tickCounter + ability.duration;
+    const endTick = system.currentTick + ability.duration;
     activeBloodlusts.set(player.id, endTick);
 }
 

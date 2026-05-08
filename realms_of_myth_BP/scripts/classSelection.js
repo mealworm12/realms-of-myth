@@ -147,9 +147,11 @@ export function finalizeClassSelection(player, raceId, classId) {
 }
 
 /**
- * Handle class selection triggered by NPC interaction
+ * Handle class selection triggered by NPC interaction.
+ * DEPRECATED: Class selection is now triggered via chat commands (!class) or
+ * block interaction (Ancient Altar). Kept for backward compatibility if needed.
  */
-export function handleClassSelection(player) {
+function handleClassSelection(player) {
     const raceTag = player.getDynamicProperty('rom:race');
     if (raceTag) {
         player.sendMessage('§cYou have already chosen a path. Use §e!reset §cto begin anew.');

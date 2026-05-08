@@ -55,10 +55,7 @@
             },
             "interact_text": "§eSpeak with The Oracle",
             "swing": true,
-            "play_sounds": "random.orb",
-            "spawn_items": {
-              "table": "loot_tables/empty"
-            }
+            "play_sounds": "random.orb"
           }
         ]
       },

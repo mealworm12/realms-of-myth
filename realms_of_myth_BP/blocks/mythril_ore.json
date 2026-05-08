@@ -22,7 +22,6 @@
           "render_method": "opaque"
         }
       },
-      "minecraft:geometry": "geometry.mythril_ore",
       "minecraft:display_name": "Mythril Ore"
     }
   }

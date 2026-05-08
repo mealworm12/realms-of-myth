@@ -44,7 +44,8 @@ export function loadPlayerData(player) {
  */
 export function resetPlayerData(player) {
     const props = ['rom:race', 'rom:class', 'rom:level', 'rom:has_chosen',
-                   'rom:bloodlust_active', 'rom:bloodlust_end', 'rom:human_xp_bonus'];
+                   'rom:bloodlust_active', 'rom:bloodlust_end', 'rom:human_xp_bonus',
+                   'rom:bow_damage_bonus', 'rom:human_skill_points'];
     for (const key of props) {
         player.setDynamicProperty(key, undefined);
     }
@@ -95,6 +96,9 @@ export function applyRaceTraits(player) {
     // Elf: permanent night vision
     if (traits.nightVision) {
         player.runCommand('effect @s night_vision 999999 0 true');
+    }
+    if (traits.bowDamageBonus) {
+        player.setDynamicProperty('rom:bow_damage_bonus', traits.bowDamageBonus);
     }
 
     // Giant: knockback resistance (via resistance effect) + reach proxy via speed/jump
