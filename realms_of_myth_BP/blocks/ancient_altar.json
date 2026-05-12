@@ -21,6 +21,7 @@
           "render_method": "opaque"
         }
       },
+      "minecraft:geometry": "geometry.ancient_altar",
       "minecraft:display_name": "Ancient Altar"
     }
   }

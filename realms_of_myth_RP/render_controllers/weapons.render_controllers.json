@@ -1,0 +1,101 @@
+{
+  "format_version": "1.10.0",
+  "render_controllers": {
+    "controller.render.mythril_sword": {
+      "geometry": "geometry.mythril_sword",
+      "materials": [
+        {
+          "*": "variable.is_enchanted ? material.enchanted : material.default"
+        }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    },
+    "controller.render.elven_dagger": {
+      "geometry": "geometry.elven_dagger",
+      "materials": [
+        {
+          "*": "variable.is_enchanted ? material.enchanted : material.default"
+        }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    },
+    "controller.render.troll_warhammer": {
+      "geometry": "geometry.troll_warhammer",
+      "materials": [
+        {
+          "*": "variable.is_enchanted ? material.enchanted : material.default"
+        }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    },
+    "controller.render.dragon_bone_greatsword": {
+      "geometry": "geometry.dragon_bone_greatsword",
+      "materials": [
+        {
+          "*": "variable.is_enchanted ? material.enchanted : material.default"
+        }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    },
+    "controller.render.giant_club": {
+      "geometry": "geometry.giant_club",
+      "materials": [
+        {
+          "*": "variable.is_enchanted ? material.enchanted : material.default"
+        }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    },
+    "controller.render.dragonslayer_spear": {
+      "geometry": "geometry.dragonslayer_spear",
+      "materials": [
+        {
+          "*": "variable.is_enchanted ? material.enchanted : material.default"
+        }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    },
+    "controller.render.magic_staff": {
+      "geometry": "geometry.magic_staff",
+      "materials": [
+        {
+          "*": "variable.is_enchanted ? material.enchanted : material.default"
+        }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    },
+    "controller.render.shadowfang_dagger": {
+      "geometry": "geometry.shadowfang_dagger",
+      "materials": [
+        {
+          "*": "variable.is_enchanted ? material.enchanted : material.default"
+        }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    }
+  }
+}

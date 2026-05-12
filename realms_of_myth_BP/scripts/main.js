@@ -36,7 +36,7 @@ world.afterEvents.playerJoin.subscribe((event) => {
                 rawtext: [
                     { text: '§6══════════════════════════════════\n' },
                     { text: '§e§lWelcome to Realms of Myth!\n' },
-                    { text: '§7Find the Ancient Altar to choose your destiny.\n' },
+                    { text: '§7Speak with the Oracle or find the Ancient Altar.\n' },
                     { text: '§7Type §a!class §7to open the class selection screen.\n' },
                     { text: '§6══════════════════════════════════' }
                 ]
@@ -50,7 +50,7 @@ world.afterEvents.playerLeave.subscribe((event) => {
     clearCooldowns(event.playerId);
 });
 
-// ── Entity Interact (Altar & Oracle) ─────────────────────
+// ── Entity Interact: Oracle opens class selection ────────
 world.afterEvents.playerInteractWithEntity.subscribe((event) => {
     const player = event.player;
     const target = event.target;
@@ -58,18 +58,22 @@ world.afterEvents.playerInteractWithEntity.subscribe((event) => {
 
     const typeId = target.typeId;
 
-    // Oracle / Elf Warrior interaction
+    // Oracle / Elf Warrior: click to open class selection
     if (typeId === 'realms:elf_warrior') {
         const raceTag = player.getDynamicProperty('rom:race');
-        if (raceTag) {
-            player.sendMessage('§7The Oracle remembers you, brave adventurer. Use §e!reset §7to begin anew.');
+        const hasChosen = player.getDynamicProperty('rom:has_chosen');
+        if (raceTag && hasChosen) {
+            const cls = player.getDynamicProperty('rom:class');
+            const clsData = CLASSES[cls];
+            player.sendMessage(`§7The Oracle: §eYou walk the path of the §l${raceTag} ${clsData ? clsData.name : cls}§r§e. §7Use §e!reset §7to begin anew.`);
         } else {
-            player.sendMessage('§eThe Oracle beckons... Type §a!class §eto choose your destiny.');
+            player.sendMessage('§6The Oracle opens the Scroll of Destiny...');
+            system.runTimeout(() => showClassSelectionForm(player), 5);
         }
     }
 });
 
-// ── Block Interact (Ancient Altar) ───────────────────────
+// ── Block Interact: Ancient Altar opens class selection ──
 world.afterEvents.playerInteractWithBlock.subscribe((event) => {
     const player = event.player;
     const block = event.block;
@@ -77,11 +81,14 @@ world.afterEvents.playerInteractWithBlock.subscribe((event) => {
 
     if (block.typeId === 'realms:ancient_altar') {
         const raceTag = player.getDynamicProperty('rom:race');
-        if (!raceTag) {
-            player.sendMessage('§6§lThe Ancient Altar hums with energy...');
-            system.runTimeout(() => showClassSelectionForm(player), 10);
+        const hasChosen = player.getDynamicProperty('rom:has_chosen');
+        if (!raceTag || !hasChosen) {
+            player.sendMessage('§6§lThe Ancient Altar hums with ancient power...');
+            system.runTimeout(() => showClassSelectionForm(player), 5);
         } else {
-            player.sendMessage('§7The Altar recognizes your spirit. Use §e!classinfo §7to review your abilities.');
+            const cls = player.getDynamicProperty('rom:class');
+            const clsData = CLASSES[cls];
+            player.sendMessage(`§7The Altar recognizes you: §e§l${raceTag} ${clsData ? clsData.name : cls}§r§7. Use §e!classinfo §7to review abilities.`);
         }
     }
 });

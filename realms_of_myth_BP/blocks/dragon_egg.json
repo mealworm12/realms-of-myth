@@ -21,6 +21,7 @@
           "render_method": "opaque"
         }
       },
+      "minecraft:geometry": "geometry.dragon_egg",
       "minecraft:display_name": "Dragon Egg"
     }
   }

@@ -1,0 +1,66 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.magic_staff",
+        "texture_width": 64,
+        "texture_height": 64
+      },
+      "bones": [
+        {
+          "name": "handle",
+          "pivot": [
+            0,
+            8,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                -6,
+                -0.5
+              ],
+              "size": [
+                1,
+                16,
+                1
+              ],
+              "uv": [
+                0,
+                14
+              ]
+            }
+          ]
+        },
+        {
+          "name": "crystal",
+          "pivot": [
+            0,
+            8,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                10,
+                -2
+              ],
+              "size": [
+                5,
+                4,
+                5
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
