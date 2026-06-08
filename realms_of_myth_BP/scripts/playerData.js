@@ -3,8 +3,9 @@
  * Stores/retrieves player class, race, level via dynamic properties
  */
 
-import { world, Player } from '@minecraft/server';
+import { world, system, Player } from '@minecraft/server';
 import { RACES } from './classSystem.js';
+import { CLASS_MASTER_BONUSES } from './config.js';
 
 /**
  * Save player race/class/level to dynamic properties
@@ -134,6 +135,7 @@ export function restorePlayerState(player) {
     console.log(`[Realms of Myth] Restoring ${player.name}: ${data.race} ${data.class}`);
 
     applyRaceTraits(player);
+    applyClassMasterBonuses(player);
 
     // Regive class token if missing
     if (data.class) {
@@ -155,4 +157,80 @@ export function restorePlayerState(player) {
             }
         }
     }
+}
+
+/**
+ * Check if a player is wearing a full Class Master armor set and apply bonuses.
+ * Run on spawn/respawn and re-check periodically.
+ * 
+ * Class Master bonus application:
+ * - Mage: +30% ability damage (stored as dynamic property, checked in abilities.js)
+ * - Ranger: +15% speed, no fall damage
+ * - Berserker: +25% damage when below 50% HP
+ * - Paladin: 10% damage reflect
+ * - Druid: permanent regeneration
+ */
+export function applyClassMasterBonuses(player) {
+    const data = loadPlayerData(player);
+    if (!data || !data.class) return;
+
+    const classId = data.class;
+    const bonus = CLASS_MASTER_BONUSES[classId];
+    if (!bonus) return;
+
+    const equippable = player.getComponent('minecraft:equippable');
+    if (!equippable) return;
+
+    // Check if player is wearing full Class Master set
+    const classPrefix = classId;
+    const slots = {
+        head: equippable.getEquipment('Head'),
+        chest: equippable.getEquipment('Chest'),
+        legs: equippable.getEquipment('Legs'),
+        feet: equippable.getEquipment('Feet')
+    };
+
+    const isFullSet = (
+        slots.head && slots.head.typeId === `realms:${classPrefix}_master_helmet` &&
+        slots.chest && slots.chest.typeId === `realms:${classPrefix}_master_chestplate` &&
+        slots.legs && slots.legs.typeId === `realms:${classPrefix}_master_leggings` &&
+        slots.feet && slots.feet.typeId === `realms:${classPrefix}_master_boots`
+    );
+
+    if (!isFullSet) {
+        // Clear any previous bonuses
+        player.setDynamicProperty('rom:class_master_bonus', undefined);
+        return;
+    }
+
+    // Apply the bonus
+    player.setDynamicProperty('rom:class_master_bonus', classId);
+
+    switch (classId) {
+        case 'mage':
+            // +30% ability damage — tracked in abilities.js via dynamic property
+            player.sendMessage('§d✦ Arcane Amplification: +30% ability damage!');
+            break;
+        case 'ranger':
+            // +15% speed, no fall damage
+            player.runCommand('effect @s speed 999999 1 true');
+            player.runCommand('effect @s slow_falling 999999 1 true');
+            player.sendMessage('§a✦ Shadow\'s Grace: +15% speed, no fall damage!');
+            break;
+        case 'berserker':
+            // +25% damage at <50% HP — tracked in abilities.js via dynamic property
+            player.sendMessage('§c✦ Blood Fury: +25% damage when below 50% HP!');
+            break;
+        case 'paladin':
+            // 10% damage reflect — tracked in abilities.js via dynamic property
+            player.sendMessage('§e✦ Radiant Aegis: 10% damage reflected!');
+            break;
+        case 'druid':
+            // Permanent regeneration
+            player.runCommand('effect @s regeneration 999999 0 true');
+            player.sendMessage('§2✦ Wildheart Vitality: permanent regeneration!');
+            break;
+    }
+
+    console.log(`[Realms of Myth] Applied ${bonus.name} to ${player.name}`);
 }

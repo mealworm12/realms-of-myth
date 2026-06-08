@@ -101,7 +101,7 @@ export function registerAbilities() {
         activeBloodlusts.delete(pid);
     });
 
-    // ── Entity Hurt Handler (lifesteal + dragonslayer) ────
+    // ── Entity Hurt Handler (lifesteal + dragonslayer + berserker bonus) ──
     world.afterEvents.entityHurt.subscribe((event) => {
         if (!event.damageSource?.damagingEntity) return;
         const damager = event.damageSource.damagingEntity;
@@ -122,19 +122,68 @@ export function registerAbilities() {
         // --- Dragonslayer Spear: double damage vs dragons ---
         if (damager instanceof Player) {
             const family = victim.getComponent('minecraft:type_family');
-            if (!family || !family.hasType('dragon')) return;
-
-            const equippable = damager.getComponent('minecraft:equippable');
-            if (!equippable) return;
-            const weapon = equippable.getEquipment('Mainhand');
-            if (!weapon || weapon.typeId !== 'realms:dragonslayer_spear') return;
-
-            const extraDamage = event.damage;
-            const vHealth = victim.getComponent('minecraft:health');
-            if (vHealth) {
-                vHealth.setCurrentValue(vHealth.currentValue - extraDamage);
+            if (family && family.hasType('dragon')) {
+                const equippable = damager.getComponent('minecraft:equippable');
+                if (equippable) {
+                    const weapon = equippable.getEquipment('Mainhand');
+                    if (weapon && weapon.typeId === 'realms:dragonslayer_spear') {
+                        const extraDamage = event.damage;
+                        const vHealth = victim.getComponent('minecraft:health');
+                        if (vHealth) {
+                            vHealth.setCurrentValue(vHealth.currentValue - extraDamage);
+                        }
+                        damager.sendMessage('§6⚔ Dragonslayer! Double damage dealt.');
+                    }
+                }
             }
-            damager.sendMessage('§6⚔ Dragonslayer! Double damage dealt.');
+        }
+
+        // --- Berserker Class Master: +25% damage when below 50% HP ---
+        if (damager instanceof Player) {
+            const masterBonus = damager.getDynamicProperty('rom:class_master_bonus');
+            if (masterBonus === 'berserker') {
+                const hp = damager.getComponent('minecraft:health');
+                if (hp && hp.currentValue < hp.effectiveMax * 0.5) {
+                    const extraDamage = Math.ceil(event.damage * 0.25);
+                    const vHealth = victim.getComponent('minecraft:health');
+                    if (vHealth && extraDamage > 0) {
+                        vHealth.setCurrentValue(vHealth.currentValue - extraDamage);
+                    }
+                }
+            }
+        }
+
+        // --- Paladin Class Master: 10% damage reflect ---
+        if (victim instanceof Player) {
+            const masterBonus = victim.getDynamicProperty('rom:class_master_bonus');
+            if (masterBonus === 'paladin') {
+                const reflect = Math.ceil(event.damage * 0.10);
+                if (reflect > 0 && event.damageSource?.damagingEntity) {
+                    const source = event.damageSource.damagingEntity;
+                    const sHealth = source.getComponent('minecraft:health');
+                    if (sHealth) {
+                        sHealth.setCurrentValue(sHealth.currentValue - reflect);
+                    }
+                }
+            }
+        }
+
+        // --- Elf Bow Damage Bonus ---
+        if (damager instanceof Player) {
+            const cause = event.damageSource.cause;
+            if (cause === 'projectile') {
+                const race = damager.getDynamicProperty('rom:race');
+                if (race === 'elf') {
+                    const bonus = damager.getDynamicProperty('rom:bow_damage_bonus');
+                    if (bonus) {
+                        const extraDamage = Math.ceil(event.damage * bonus);
+                        const vHealth = victim.getComponent('minecraft:health');
+                        if (vHealth && extraDamage > 0) {
+                            vHealth.setCurrentValue(vHealth.currentValue - extraDamage);
+                        }
+                    }
+                }
+            }
         }
     });
 
@@ -163,35 +212,18 @@ export function registerAbilities() {
         if (race === 'human') {
             const xpBonus = damager.getDynamicProperty('rom:human_skill_points');
             if (xpBonus) {
+                // Grant 1 bonus experience level per kill
+                try {
+                    damager.runCommand('xp 1L @s');
+                } catch (e) {
+                    // Silently fail if commands disabled
+                }
                 damager.sendMessage('§e🌟 Human Adaptability: bonus XP earned!');
             }
         }
     });
 
-    // ── Elf Bow Damage Bonus Handler ──────────────────────
-    world.afterEvents.entityHurt.subscribe((event) => {
-        if (!event.damageSource?.damagingEntity) return;
-        const damager = event.damageSource.damagingEntity;
-        if (!(damager instanceof Player)) return;
-
-        // Only applies to projectile (bow) damage from Elf players
-        const cause = event.damageSource.cause;
-        if (cause !== 'projectile') return;
-
-        const race = damager.getDynamicProperty('rom:race');
-        if (race !== 'elf') return;
-
-        const bonus = damager.getDynamicProperty('rom:bow_damage_bonus');
-        if (!bonus) return;
-
-        const extraDamage = Math.ceil(event.damage * bonus);
-        const victim = event.hurtEntity;
-        const vHealth = victim.getComponent('minecraft:health');
-        if (vHealth && extraDamage > 0) {
-            vHealth.setCurrentValue(vHealth.currentValue - extraDamage);
-        }
-    });
-}
+});
 
 function getCooldownMap(playerId) {
     if (!cooldowns.has(playerId)) cooldowns.set(playerId, new Map());
@@ -202,6 +234,12 @@ function getCooldownMap(playerId) {
  * Dispatch to the correct ability implementation
  */
 function executeAbility(player, classId, ability, raceId) {
+    // Mage Class Master: +30% ability damage
+    let damageMultiplier = 1.0;
+    if (player.getDynamicProperty('rom:class_master_bonus') === 'mage') {
+        damageMultiplier = 1.30;
+    }
+
     switch (ability.id) {
         // Mage
         case 'fireball':     spawnFireball(player, ability); break;
@@ -217,12 +255,12 @@ function executeAbility(player, classId, ability, raceId) {
         case 'rage':         applyBuffs(player, ability, [
             ['strength', 2], ['speed', 1]
         ], 'mob.ravager.roar', 'minecraft:angry_villager'); break;
-        case 'ground_slam':  doGroundSlam(player, ability); break;
+        case 'ground_slam':  doGroundSlam(player, ability, damageMultiplier); break;
         case 'bloodlust':    activateBloodlust(player, ability); break;
         // Paladin
         case 'holy_light':   healAOE(player, ability); break;
         case 'divine_shield': applyShield(player, ability, 'resistance', 10); break;
-        case 'smite':         doSmite(player, ability); break;
+        case 'smite':         doSmite(player, ability, damageMultiplier); break;
         // Druid
         case 'wolf_form':    applyBuffs(player, ability, [
             ['speed', 2], ['strength', 1]
@@ -305,10 +343,11 @@ function highlightNearby(player, ability) {
 // BERSERKER
 // ═══════════════════════════════════════════════════════════
 
-function doGroundSlam(player, ability) {
+function doGroundSlam(player, ability, multiplier) {
     const dim = player.dimension;
+    const dmgLevel = Math.round((ability.damage * multiplier) / 3);
     dim.runCommand(`effect @e[family=monster,r=${ability.radius}] levitation 5 0 true`);
-    dim.runCommand(`effect @e[family=monster,r=${ability.radius}] instant_damage 1 ${Math.round(ability.damage / 3)} true`);
+    dim.runCommand(`effect @e[family=monster,r=${ability.radius}] instant_damage 1 ${dmgLevel} true`);
     dim.runCommand(`execute at @p run particle minecraft:large_explosion ~ ~ ~`);
     player.playSound('mob.irongolem.hit');
 }
@@ -332,9 +371,10 @@ function healAOE(player, ability) {
     player.playSound('random.orb');
 }
 
-function doSmite(player, ability) {
+function doSmite(player, ability, multiplier) {
     const dim = player.dimension;
-    dim.runCommand(`effect @e[family=monster,c=1,r=8] instant_damage 1 ${Math.round(ability.damage / 3)} true`);
+    const dmgLevel = Math.round((ability.damage * multiplier) / 3);
+    dim.runCommand(`effect @e[family=monster,c=1,r=8] instant_damage 1 ${dmgLevel} true`);
     player.playSound('ambient.weather.thunder');
     dim.runCommand(`execute at @p run particle minecraft:lightning_bolt ~ ~ ~`);
 }

@@ -76,12 +76,16 @@
     },
     "events": {
       "realms:player_interact": {
-        "run_command": {
-          "command": [
-            "titleraw @p actionbar {\"rawtext\":[{\"text\":\"§eThe Oracle says: Find your destiny. Use §a!class §eto begin.\"}]}"
-          ],
-          "target": "other"
-        }
+        "sequence": [
+          {
+            "run_command": {
+              "command": [
+                "playsound random.orb @p"
+              ],
+              "target": "other"
+            }
+          }
+        ]
       },
       "minecraft:entity_spawned": {}
     }

@@ -62,6 +62,17 @@
       "minecraft:loot": {
         "table": "loot_tables/entities/giant_colossus.json"
       },
+      "minecraft:ambient_sound": {
+        "sound": "entity.giant.stomp",
+        "interval": 200,
+        "range": 16.0
+      },
+      "minecraft:hurt_sound": {
+        "sound": "mob.irongolem.hit"
+      },
+      "minecraft:death_sound": {
+        "sound": "mob.irongolem.death"
+      },
       "minecraft:boss": {
         "name": "Giant Colossus",
         "hud_range": 55
