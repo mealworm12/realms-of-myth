@@ -1,2 +1,70 @@
-pack.name=Realms of Myth Resource Pack
-pack.description=Textures, models, and sounds for the Realms of Myth fantasy add-on
+## Realms of Myth — Resource Pack
+## Translation keys for items, blocks, and entities.
+
+pack.name=§6§lRealms of Myth
+pack.description=§eA fantasy RPG add-on with 4 races, 5 classes, 15 abilities, 2 dragon bosses, and tiered gear.
+
+## ── Items ──
+item.realms:mythril_sword.name=Mythril Sword
+item.realms:dragon_bone_greatsword.name=Dragon Bone Greatsword
+item.realms:shadowfang_dagger.name=Shadowfang Dagger
+item.realms:elven_dagger.name=Elven Dagger
+item.realms:troll_warhammer.name=Troll Warhammer
+item.realms:giant_club.name=Giant Club
+item.realms:mythril_bow.name=Mythril Bow
+item.realms:enchanted_bow.name=Enchanted Bow
+item.realms:magic_staff.name=Staff of Arcana
+item.realms:dragonslayer_spear.name=Dragonslayer Spear
+item.realms:mythril_ingot.name=Mythril Ingot
+item.realms:dragon_scale.name=Dragon Scale
+item.realms:dragon_heart.name=Dragon Heart
+item.realms:fire_essence.name=Fire Essence
+item.realms:frost_essence.name=Frost Essence
+item.realms:class_token_mage.name=Mage Class Token
+item.realms:class_token_ranger.name=Ranger Class Token
+item.realms:class_token_berserker.name=Berserker Class Token
+item.realms:class_token_paladin.name=Paladin Class Token
+item.realms:class_token_druid.name=Druid Class Token
+
+## ── Armor ──
+item.realms:mythril_helmet.name=Mythril Helmet
+item.realms:mythril_chestplate.name=Mythril Chestplate
+item.realms:mythril_leggings.name=Mythril Leggings
+item.realms:mythril_boots.name=Mythril Boots
+item.realms:dragonscale_helmet.name=Dragonscale Helmet
+item.realms:dragonscale_chestplate.name=Dragonscale Chestplate
+item.realms:dragonscale_leggings.name=Dragonscale Leggings
+item.realms:dragonscale_boots.name=Dragonscale Boots
+item.realms:mage_master_helmet.name=Mage Master Hood
+item.realms:mage_master_chestplate.name=Mage Master Robe
+item.realms:mage_master_leggings.name=Mage Master Skirt
+item.realms:mage_master_boots.name=Mage Master Boots
+item.realms:ranger_master_helmet.name=Ranger Master Hood
+item.realms:ranger_master_chestplate.name=Ranger Master Jerkin
+item.realms:ranger_master_leggings.name=Ranger Master Leggings
+item.realms:ranger_master_boots.name=Ranger Master Boots
+item.realms:berserker_master_helmet.name=Berserker Master Helmet
+item.realms:berserker_master_chestplate.name=Berserker Master Chestplate
+item.realms:berserker_master_leggings.name=Berserker Master Leggings
+item.realms:berserker_master_boots.name=Berserker Master Boots
+item.realms:paladin_master_helmet.name=Paladin Master Helmet
+item.realms:paladin_master_chestplate.name=Paladin Master Chestplate
+item.realms:paladin_master_leggings.name=Paladin Master Leggings
+item.realms:paladin_master_boots.name=Paladin Master Boots
+item.realms:druid_master_helmet.name=Druid Master Hood
+item.realms:druid_master_chestplate.name=Druid Master Robe
+item.realms:druid_master_leggings.name=Druid Master Skirt
+item.realms:druid_master_boots.name=Druid Master Boots
+
+## ── Blocks ──
+tile.realms:mythril_ore.name=Mythril Ore
+tile.realms:dragon_egg.name=Dragon Egg
+tile.realms:ancient_altar.name=Ancient Altar
+
+## ── Entities ──
+entity.realms:dragon_fire.name=Fire Dragon
+entity.realms:dragon_frost.name=Frost Dragon
+entity.realms:dragon_whelp.name=Dragon Whelp
+entity.realms:elf_warrior.name=The Oracle
+entity.realms:troll_brute.name=Troll Brute
+entity.realms:giant_colossus.name=Giant Colossus

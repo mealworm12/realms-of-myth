@@ -10,14 +10,18 @@
         "default": "textures/entity/dragon_whelp"
       },
       "geometry": {
-        "default": "geometry.realms.dragon_fire"
+        "default": "geometry.realms.dragon_whelp"
       },
       "render_controllers": [
-        "controller.render.dragon_fire"
+        "controller.render.dragon_whelp"
       ],
-      "spawn_egg": {
-        "base_color": "#884422",
-        "overlay_color": "#CC6633"
+      "animations": {
+        "idle": "animation.dragon_whelp.idle"
+      },
+      "scripts": {
+        "animate": [
+          "idle"
+        ]
       }
     }
   }

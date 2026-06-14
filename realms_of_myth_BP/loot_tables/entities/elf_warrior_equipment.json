@@ -1,19 +1,31 @@
 {
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "item",
-          "name": "realms:elven_dagger",
-          "weight": 100
-        },
-        {
-          "type": "item",
-          "name": "realms:mythril_bow",
-          "weight": 40
-        }
-      ]
-    }
-  ]
+  "format_version": "1.21.60",
+  "minecraft:equipment": {
+    "description": {
+      "identifier": "loot_tables/entities/elf_warrior_equipment"
+    },
+    "pool": [
+      {
+        "rolls": 1,
+        "entries": [
+          {
+            "weight": 100,
+            "equipment": {
+              "mainhand": {
+                "name": "realms:elven_dagger"
+              }
+            }
+          },
+          {
+            "weight": 40,
+            "equipment": {
+              "mainhand": {
+                "name": "realms:mythril_bow"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
 }

@@ -8,16 +8,16 @@
       "crafting_table"
     ],
     "pattern": [
-      " D ",
-      " D ",
-      " S "
+      "  D",
+      "  D",
+      "  S"
     ],
     "key": {
       "D": {
         "item": "realms:dragon_scale"
       },
       "S": {
-        "item": "minecraft:stick"
+        "item": "realms:mythril_sword"
       }
     },
     "result": {

@@ -29,7 +29,8 @@
       "minecraft:icon": "mythril_sword",
       "minecraft:display_name": {
         "value": "Mythril Sword"
-      }
+      },
+      "minecraft:hand_equipped": true
     }
   }
 }

@@ -1,0 +1,27 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:mythril_bow_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      " MS",
+      "M S",
+      " MS"
+    ],
+    "key": {
+      "M": {
+        "item": "realms:mythril_ingot"
+      },
+      "S": {
+        "item": "minecraft:string"
+      }
+    },
+    "result": {
+      "item": "realms:mythril_bow"
+    }
+  }
+}

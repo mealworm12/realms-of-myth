@@ -1,0 +1,27 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:enchanted_bow_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      " DS",
+      "D S",
+      " DS"
+    ],
+    "key": {
+      "D": {
+        "item": "realms:dragon_scale"
+      },
+      "S": {
+        "item": "minecraft:string"
+      }
+    },
+    "result": {
+      "item": "realms:enchanted_bow"
+    }
+  }
+}

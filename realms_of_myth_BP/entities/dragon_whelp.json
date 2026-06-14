@@ -63,6 +63,9 @@
         "sound": "mob.enderdragon.death",
         "pitch": 1.5
       },
+      "minecraft:loot": {
+        "table": "loot_tables/entities/dragon_whelp.json"
+      },
       "minecraft:physics": {}
     }
   }

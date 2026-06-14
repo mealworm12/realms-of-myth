@@ -1,0 +1,22 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:paladin_master_boots_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "I I",
+      "HIH"
+    ],
+    "key": {
+      "H": { "item": "realms:dragon_heart" },
+      "I": { "item": "realms:mythril_ingot" }
+    },
+    "result": {
+      "item": "realms:paladin_master_boots"
+    }
+  }
+}

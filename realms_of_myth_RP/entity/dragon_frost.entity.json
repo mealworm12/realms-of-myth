@@ -13,8 +13,17 @@
         "default": "geometry.realms.dragon_frost"
       },
       "render_controllers": [
-        "controller.render.dragon_frost"
-      ]
+        "controller.render.dragon_fire"
+      ],
+      "animations": {
+        "wing_flap": "animation.dragon_frost.wing_flap",
+        "breath": "animation.dragon_frost.breath"
+      },
+      "scripts": {
+        "animate": [
+          "wing_flap"
+        ]
+      }
     }
   }
 }

@@ -11,9 +11,12 @@
       "minecraft:max_stack_size": 1,
       "minecraft:icon": "class_token_ranger",
       "minecraft:display_name": {
-        "value": "Ranger Class Token"
+        "value": "Ranger Class Token\n§7A token of woodland grace. §oRight-click to choose your path."
       },
-      "minecraft:glint": true
+      "minecraft:glint": true,
+      "minecraft:use_modifiers": {
+        "use_duration": 0.5
+      }
     }
   }
 }

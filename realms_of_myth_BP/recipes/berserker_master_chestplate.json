@@ -1,0 +1,23 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:berserker_master_chestplate_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "HSH",
+      "HHH",
+      "HHH"
+    ],
+    "key": {
+      "H": { "item": "realms:dragon_heart" },
+      "S": { "item": "realms:dragon_scale" }
+    },
+    "result": {
+      "item": "realms:berserker_master_chestplate"
+    }
+  }
+}
