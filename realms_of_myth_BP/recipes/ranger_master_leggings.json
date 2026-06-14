@@ -1,0 +1,23 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:ranger_master_leggings_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "HHH",
+      "HWH",
+      "W W"
+    ],
+    "key": {
+      "H": { "item": "realms:dragon_heart" },
+      "W": { "item": "realms:mythril_bow" }
+    },
+    "result": {
+      "item": "realms:ranger_master_leggings"
+    }
+  }
+}

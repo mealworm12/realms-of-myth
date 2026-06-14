@@ -8,7 +8,7 @@
 
 import { world, system } from '@minecraft/server';
 import { CLASSES, RACES } from './classSystem.js';
-import { restorePlayerState, resetPlayerData, loadPlayerData } from './playerData.js';
+import { restorePlayerState, resetPlayerData, loadPlayerData, applyClassMasterBonuses } from './playerData.js';
 import { showClassSelectionForm } from './classSelection.js';
 import { registerAbilities, clearCooldowns } from './abilities.js';
 import { registerDragonAI } from './dragonBoss.js';
@@ -52,6 +52,59 @@ world.afterEvents.playerJoin.subscribe((event) => {
 // ── Player Leave cleanup ────────────────────────────────────────────
 world.afterEvents.playerLeave.subscribe((event) => {
     clearCooldowns(event.playerId);
+});
+
+// ── Entity Equip: re-check Class Master set bonus when armor changes ─
+// Without this, the bonus only kicks in on respawn. With this hook, equipping
+// the last piece of a Master set during gameplay applies the bonus live.
+try {
+    world.afterEvents.entityEquip.subscribe((event) => {
+        const player = event.entity;
+        if (!player || !player.getDynamicProperty) return;
+        // applyClassMasterBonuses re-evaluates the equipped armor
+        applyClassMasterBonuses(player);
+    });
+} catch (e) {
+    // entityEquip may not be available in all API versions; fail silently
+}
+
+// ── Item Use: Class Token pre-selection ───────────────────────────────
+// When a player right-clicks a class token, the class selection form opens
+// with that class pre-selected. This is the primary way class tokens are
+// "used" in-game.
+const CLASS_TOKENS = new Set([
+    'realms:class_token_mage', 'realms:class_token_ranger', 'realms:class_token_berserker',
+    'realms:class_token_paladin', 'realms:class_token_druid',
+]);
+
+world.afterEvents.itemUse.subscribe((event) => {
+    const player = event.source;
+    const item = event.itemStack;
+    if (!item || !CLASS_TOKENS.has(item.typeId)) return;
+
+    // Extract classId from item id: 'realms:class_token_X' -> 'X'
+    const classId = item.typeId.split('_').pop();
+
+    // Allow the form to proceed even if the player has already chosen
+    // (so they can re-pick a class by using a different token)
+    if (!CLASSES[classId]) {
+        player.sendMessage('§cUnknown class token.');
+        return;
+    }
+
+    // If a race is already chosen, the form will skip to the confirm step.
+    // Otherwise, the form will start at the race step and the player can
+    // pick their race first.
+    const hasChosen = player.getDynamicProperty('rom:has_chosen');
+    const race = player.getDynamicProperty('rom:race');
+    if (hasChosen && race) {
+        player.sendMessage(`§7You are already a §e${race} ${CLASSES[player.getDynamicProperty('rom:class')].name}§7. Use §a!reset §7to re-pick.`);
+        return;
+    }
+
+    event.cancel = true;
+    player.sendMessage(`§6§lThe ${CLASSES[classId].name} Token resonates with your destiny...`);
+    system.runTimeout(() => showClassSelectionForm(player, classId), 5);
 });
 
 // ── Entity Interact: Oracle opens class selection ───────────────────
@@ -146,7 +199,8 @@ world.beforeEvents.chatSend.subscribe((event) => {
                 { text: '§a!reset §7— reset your race & class (re-pick)\n' },
                 { text: '§a!help §7— show this list\n' },
                 { text: '§7Abilities: hold Nether Star (☆), Blaze Powder (🔥), Ghast Tear (💧) + right-click\n' },
-                { text: '§7Find the Ancient Altar or speak to the Elf Warrior to start.' }
+                { text: '§7Find the Ancient Altar or speak to the Oracle to start.\n' },
+                { text: '§7Use Class Tokens (dropped by Ancient Altar) to instantly pre-select a class.' }
             ]
         });
     }

@@ -1,0 +1,81 @@
+{
+  "format_version": "1.17.41",
+  "minecraft:npc_dialogue": {
+    "scenes": [
+      {
+        "scene_tag": "realms.oracle.welcome",
+        "npc_name": "§lThe Oracle §r§7(Elf Warrior)",
+        "text": "Greetings, traveler. §eYou stand at the threshold of destiny.§r\n\nI am the Oracle — keeper of the ancient paths. The Realms are in turmoil. The dragons have returned, and the ancient altars stir with magic.\n\n§7Will you seek your destiny?",
+        "buttons": [
+          {
+            "name": "§aYes — show me my path",
+            "commands": [
+              "dialogue_change_scene @s realms.oracle.path"
+            ]
+          },
+          {
+            "name": "§eWhat are the Realms of Myth?",
+            "commands": [
+              "dialogue_change_scene @s realms.oracle.lore"
+            ]
+          },
+          {
+            "name": "§7Farewell",
+            "commands": [
+              "dialogue_change_scene @s realms.oracle.close"
+            ]
+          }
+        ]
+      },
+      {
+        "scene_tag": "realms.oracle.path",
+        "npc_name": "§lThe Oracle",
+        "text": "§e§lTo walk a path of power, you must choose.§r\n\nFour races call this world home: the swift §bElves§r, the hard-headed §8Trolls§r, the massive §7Giants§r, and the adaptable §fHumans§r.\n\nFive classes define your craft: §dMage§r, §2Ranger§r, §cBerserker§r, §ePaladin§r, and §aDruid§r.\n\n§7Open the §f/class§7 command or the §fAncient Altar§7 to make your choice.",
+        "buttons": [
+          {
+            "name": "§aOpen class selection",
+            "commands": [
+              "function realms.open_class_selection"
+            ]
+          },
+          {
+            "name": "§7Back",
+            "commands": [
+              "dialogue_change_scene @s realms.oracle.welcome"
+            ]
+          }
+        ]
+      },
+      {
+        "scene_tag": "realms.oracle.lore",
+        "npc_name": "§lThe Oracle",
+        "text": "§e§lLong ago, the Realms were at peace.§r\n\nThen the dragons came. Fire from the south, frost from the north. Heroes rose to face them, fell, and rose again. Their bones still litter the lairs.\n\nToday, a new generation walks the world. You can be a §dMage§r who hurls fireballs from afar. A §2Ranger§r who picks off dragons from the high grass. A §cBerserker§r who trades HP for raw power. A §ePaladin§r who stands firm in the face of flame. Or a §aDruid§r who tames the wilds to fight alongside them.\n\n§7Hunt dragons. Take their scales, their hearts, their essence. Craft armor. Forge your legend.",
+        "buttons": [
+          {
+            "name": "§7Back",
+            "commands": [
+              "dialogue_change_scene @s realms.oracle.welcome"
+            ]
+          },
+          {
+            "name": "§7Farewell",
+            "commands": [
+              "dialogue_change_scene @s realms.oracle.close"
+            ]
+          }
+        ]
+      },
+      {
+        "scene_tag": "realms.oracle.close",
+        "npc_name": "§lThe Oracle",
+        "text": "§7§oThe wind whispers your name. May it speak of your triumphs.§r",
+        "buttons": [
+          {
+            "name": "§7Close",
+            "commands": []
+          }
+        ]
+      }
+    ]
+  }
+}

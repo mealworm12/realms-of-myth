@@ -14,7 +14,16 @@
       },
       "render_controllers": [
         "controller.render.dragon_fire"
-      ]
+      ],
+      "animations": {
+        "wing_flap": "animation.dragon_fire.wing_flap",
+        "breath": "animation.dragon_fire.breath"
+      },
+      "scripts": {
+        "animate": [
+          "wing_flap"
+        ]
+      }
     }
   }
 }

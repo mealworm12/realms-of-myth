@@ -104,17 +104,71 @@ export function registerAbilities() {
         activeBloodlusts.delete(pid);
     });
 
-    // ── Entity hurt: lifesteal + dragonslayer + berserker master + paladin reflect + elf bow ─
-    // Single subscription merges five concerns (was previously split) to cut per-tick overhead.
+    // ── Entity hurt BEFORE: damage modifiers (multiplicative bonuses) ──
+    // Use beforeEvents so we can scale event.damage BEFORE the hit lands.
+    // This avoids the "victim died from the first hit so the bonus is wasted"
+    // bug that the old afterEvents version had.
+    world.beforeEvents.entityHurt.subscribe((event) => {
+        const damager = event.damageSource?.damagingEntity;
+        const victim = event.hurtEntity;
+        if (!damager) return;
+        const damagerIsPlayer = damager instanceof Player;
+        if (!damagerIsPlayer) return;
+
+        let damageMultiplier = 1.0;
+
+        // (1) Dragonslayer Spear: 2x damage vs family=dragon
+        const family = victim.getComponent('minecraft:type_family');
+        if (family && family.hasType('dragon')) {
+            const eq = damager.getComponent('minecraft:equippable');
+            if (eq) {
+                const weapon = eq.getEquipment('Mainhand');
+                if (weapon && weapon.typeId === 'realms:dragonslayer_spear') {
+                    damageMultiplier *= 2.0;
+                    system.run(() => damager.sendMessage('§6⚔ Dragonslayer! Double damage dealt.'));
+                }
+            }
+        }
+
+        // (2) Berserker Class Master: +25% damage when below 50% HP
+        if (damager.getDynamicProperty('rom:class_master_bonus') === 'berserker') {
+            const hp = damager.getComponent('minecraft:health');
+            if (hp && hp.currentValue < hp.effectiveMax * 0.5) {
+                damageMultiplier *= 1.25;
+            }
+        }
+
+        // (3) Mage Class Master: +30% ability damage (read here for damage events
+        // caused by ability entities; for direct player ability damage this is
+        // applied at the ability-dispatch point in executeAbility)
+        // (handled in damage-event separately if needed)
+
+        // (4) Elf Bow Damage Bonus: +20% damage on projectile attacks
+        if (event.damageSource.cause === 'projectile') {
+            if (damager.getDynamicProperty('rom:race') === 'elf') {
+                const bonus = damager.getDynamicProperty('rom:bow_damage_bonus');
+                if (bonus) {
+                    damageMultiplier *= (1 + bonus);
+                }
+            }
+        }
+
+        // Apply accumulated multiplier
+        if (damageMultiplier !== 1.0) {
+            event.damage = Math.ceil(event.damage * damageMultiplier);
+        }
+    });
+
+    // ── Entity hurt AFTER: lifesteal + paladin reflect ───────────────
+    // These read the FINAL damage dealt and react to it (healing the
+    // damager, reflecting to the source). Must stay in afterEvents.
     world.afterEvents.entityHurt.subscribe((event) => {
         const damager = event.damageSource?.damagingEntity;
         const victim = event.hurtEntity;
         if (!damager) return;
 
-        const damagerIsPlayer = damager instanceof Player;
-
         // (1) Lifesteal (Bloodlust) — heals the damager for 30% of damage dealt
-        if (damagerIsPlayer && activeBloodlusts.has(damager.id)) {
+        if (damager instanceof Player && activeBloodlusts.has(damager.id)) {
             const healAmount = Math.ceil(event.damage * 0.30);
             const health = damager.getComponent('minecraft:health');
             if (health) {
@@ -125,52 +179,7 @@ export function registerAbilities() {
             }
         }
 
-        if (damagerIsPlayer) {
-            // (2) Dragonslayer Spear: 2x damage vs family=dragon
-            const family = victim.getComponent('minecraft:type_family');
-            if (family && family.hasType('dragon')) {
-                const eq = damager.getComponent('minecraft:equippable');
-                if (eq) {
-                    const weapon = eq.getEquipment('Mainhand');
-                    if (weapon && weapon.typeId === 'realms:dragonslayer_spear') {
-                        const extraDamage = event.damage;
-                        const vHealth = victim.getComponent('minecraft:health');
-                        if (vHealth) {
-                            vHealth.setCurrentValue(vHealth.currentValue - extraDamage);
-                        }
-                        damager.sendMessage('§6⚔ Dragonslayer! Double damage dealt.');
-                    }
-                }
-            }
-
-            // (3) Berserker Class Master: +25% damage when below 50% HP
-            if (damager.getDynamicProperty('rom:class_master_bonus') === 'berserker') {
-                const hp = damager.getComponent('minecraft:health');
-                if (hp && hp.currentValue < hp.effectiveMax * 0.5) {
-                    const extraDamage = Math.ceil(event.damage * 0.25);
-                    const vHealth = victim.getComponent('minecraft:health');
-                    if (vHealth && extraDamage > 0) {
-                        vHealth.setCurrentValue(vHealth.currentValue - extraDamage);
-                    }
-                }
-            }
-
-            // (4) Elf Bow Damage Bonus: +20% damage on projectile attacks
-            if (event.damageSource.cause === 'projectile') {
-                if (damager.getDynamicProperty('rom:race') === 'elf') {
-                    const bonus = damager.getDynamicProperty('rom:bow_damage_bonus');
-                    if (bonus) {
-                        const extraDamage = Math.ceil(event.damage * bonus);
-                        const vHealth = victim.getComponent('minecraft:health');
-                        if (vHealth && extraDamage > 0) {
-                            vHealth.setCurrentValue(vHealth.currentValue - extraDamage);
-                        }
-                    }
-                }
-            }
-        }
-
-        // (5) Paladin Class Master: 10% damage reflect (works even if source is not a player)
+        // (2) Paladin Class Master: 10% damage reflect (works even if source is not a player)
         if (victim instanceof Player) {
             if (victim.getDynamicProperty('rom:class_master_bonus') === 'paladin') {
                 const reflect = Math.ceil(event.damage * 0.10);

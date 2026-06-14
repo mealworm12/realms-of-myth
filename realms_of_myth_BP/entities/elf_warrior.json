@@ -62,6 +62,9 @@
       "minecraft:equipment": {
         "table": "loot_tables/entities/elf_warrior_equipment.json"
       },
+      "minecraft:loot": {
+        "table": "loot_tables/entities/elf_warrior.json"
+      },
       "minecraft:ambient_sound": {
         "sound": "mob.villager.ambient",
         "interval": 100,

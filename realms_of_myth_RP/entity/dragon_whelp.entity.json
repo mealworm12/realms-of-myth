@@ -15,9 +15,13 @@
       "render_controllers": [
         "controller.render.dragon_whelp"
       ],
-      "spawn_egg": {
-        "base_color": "#884422",
-        "overlay_color": "#CC6633"
+      "animations": {
+        "idle": "animation.dragon_whelp.idle"
+      },
+      "scripts": {
+        "animate": [
+          "idle"
+        ]
       }
     }
   }

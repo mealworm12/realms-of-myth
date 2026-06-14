@@ -22,7 +22,8 @@
         }
       },
       "minecraft:geometry": "geometry.ancient_altar",
-      "minecraft:display_name": "Ancient Altar"
+      "minecraft:display_name": "Ancient Altar",
+      "minecraft:loot": "loot_tables/blocks/ancient_altar.json"
     }
   }
 }

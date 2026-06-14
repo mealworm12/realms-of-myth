@@ -221,3 +221,22 @@ export function getRaceTraits(raceId) {
     const race = RACES[raceId];
     return race ? race.traits : null;
 }
+
+/**
+ * Trait key catalog — single source of truth for what trait keys exist.
+ * Used by classSelection.js (UI), playerData.js (effect application),
+ * and any future docs. Adding a new trait: add the key here, add the
+ * value to the relevant race in RACES, and add the effect-application
+ * branch in playerData.js#applyRaceTraits.
+ */
+export const TRAIT_KEYS = {
+    bowDamageBonus:    { type: 'float', label: 'Bow Damage Bonus', unit: '×' },
+    nightVision:       { type: 'bool',  label: 'Night Vision' },
+    bonusHealth:       { type: 'int',   label: 'Bonus HP', unit: 'HP' },
+    slowRegeneration:  { type: 'bool',  label: 'Slow Regeneration' },
+    knockbackResistance:{ type: 'float', label: 'Knockback Resistance', unit: '×' },
+    reachBonus:        { type: 'int',   label: 'Reach Bonus', unit: 'blocks' },
+    xpBonus:           { type: 'float', label: 'XP Bonus', unit: '×' },
+    bonusSkillPoint:   { type: 'int',   label: 'Bonus Skill Point' },
+    baseHealth:        { type: 'int',   label: 'Base HP', unit: 'HP' },
+};

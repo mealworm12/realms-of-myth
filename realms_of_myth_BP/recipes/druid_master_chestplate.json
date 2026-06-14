@@ -1,0 +1,23 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:druid_master_chestplate_craft"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "HEH",
+      "HHH",
+      "HHH"
+    ],
+    "key": {
+      "H": { "item": "realms:dragon_heart" },
+      "E": { "item": "realms:fire_essence" }
+    },
+    "result": {
+      "item": "realms:druid_master_chestplate"
+    }
+  }
+}

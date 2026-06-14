@@ -1,6 +1,9 @@
 /**
  * Realms of Myth - Class Selection UI
  * Handles the multi-step form for race + class selection using @minecraft/server-ui.
+ *
+ * Supports pre-selection via class token: when a player uses a class token item,
+ * the form opens with that class pre-selected on the second step.
  */
 
 import { ActionFormData } from '@minecraft/server-ui';
@@ -10,8 +13,23 @@ import { savePlayerData } from './playerData.js';
 /**
  * Show the class selection form to a player.
  * Step 1: Choose race → Step 2: Choose class → Step 3: Confirm
+ *
+ * @param {Player} player
+ * @param {string|null} preselectedClassId - if set, skip class selection step
+ *        and go straight to confirm with this class (used by class tokens)
  */
-export function showClassSelectionForm(player) {
+export function showClassSelectionForm(player, preselectedClassId = null) {
+    // If race already chosen + class pre-selected (from a class token),
+    // go directly to the confirm step.
+    const racePending = player.getDynamicProperty('rom:race_pending');
+    if (preselectedClassId && racePending) {
+        const race = RACES[racePending];
+        const cls = CLASSES[preselectedClassId];
+        if (race && cls) {
+            showConfirmScreen(player, race, cls);
+            return;
+        }
+    }
     showRaceSelection(player);
 }
 
@@ -131,10 +149,8 @@ export function finalizeClassSelection(player, raceId, classId) {
     // Save permanent data
     savePlayerData(player, { race: raceId, class: classId, level: 1 });
 
-    // Give class token
-    player.runCommand(`give @s realms:class_token_${classId}`);
-
-    // Welcome the player
+    // Welcome the player (no token is given here — tokens are only given
+    // via the loot/treasure flow, not as a result of selection)
     player.sendMessage({
         rawtext: [
             { text: '§6══════════════════════════════════\n' },

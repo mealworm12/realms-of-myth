@@ -64,13 +64,23 @@ export function resetPlayerData(player) {
     }
 
     // Clear any persistent race / master-set effects
+    // Covers all effects we apply (race + master bonus) plus common
+    // debuffs that a player might have picked up and shouldn't carry
+    // into the new character. `effect @s X 0` removes the effect entirely.
     try {
         const effectsToClear = [
+            // Class/race persistent effects
             'night_vision', 'resistance', 'regeneration', 'speed', 'jump_boost',
-            'luck', 'slow_falling', 'health_boost'
+            'luck', 'slow_falling', 'health_boost', 'absorption', 'fire_resistance',
+            'invisibility', 'water_breathing', 'conduit_power',
+            // Debuffs (we want a clean slate)
+            'weakness', 'slowness', 'mining_fatigue', 'blindness', 'nausea',
+            'hunger', 'poison', 'wither', 'levitation', 'darkness', 'oozing',
+            'infested', 'wind_charged', 'weaving', 'trial_omen'
         ];
         for (const eff of effectsToClear) {
-            player.runCommand(`effect @s ${eff} 0`);
+            try { player.runCommand(`effect @s ${eff} 0`); }
+            catch (e2) { /* some effect names may not exist in older versions */ }
         }
     } catch (e) { /* commands may be disabled */ }
 

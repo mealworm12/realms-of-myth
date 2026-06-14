@@ -11,9 +11,12 @@
       "minecraft:max_stack_size": 1,
       "minecraft:icon": "class_token_paladin",
       "minecraft:display_name": {
-        "value": "Paladin Class Token"
+        "value": "Paladin Class Token\n§7A token of holy light. §oRight-click to choose your path."
       },
-      "minecraft:glint": true
+      "minecraft:glint": true,
+      "minecraft:use_modifiers": {
+        "use_duration": 0.5
+      }
     }
   }
 }
