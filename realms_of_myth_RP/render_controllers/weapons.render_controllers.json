@@ -96,6 +96,30 @@
         "texture.default",
         "texture.enchanted"
       ]
+    },
+    "controller.render.mythril_bow": {
+      "geometry": "geometry.mythril_bow",
+      "materials": [
+        {
+          "*": "variable.is_enchanted ? material.enchanted : material.default"
+        }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    },
+    "controller.render.enchanted_bow": {
+      "geometry": "geometry.enchanted_bow",
+      "materials": [
+        {
+          "*": "variable.is_enchanted ? material.enchanted : material.default"
+        }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
     }
   }
 }

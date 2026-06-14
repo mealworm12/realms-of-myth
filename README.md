@@ -12,7 +12,7 @@
 A fantasy Minecraft add-on featuring playable races, class-based abilities with cooldowns, multi-phase dragon boss battles, and four tiers of fantasy weapons & armor — all in a single double-click `.mcaddon` package.
 
 **Compatible with:** Minecraft Education Edition v1.21.06+ & Bedrock Edition v1.21.60+  
-*Manifests use `format_version: 2` for cross-platform compatibility. API versions pinned to `@minecraft/server` 2.4.0 and `@minecraft/server-ui` 1.2.0 for Education Edition support.*
+*Manifests use `format_version: 2` for Education cross-platform compatibility. API versions pinned to `@minecraft/server` 2.4.0 and `@minecraft/server-ui` 1.2.0 — both are the highest stable versions shipped with Education 1.21.132.*
 
 ---
 
@@ -88,8 +88,9 @@ A fantasy Minecraft add-on featuring playable races, class-based abilities with 
 | Command | Action |
 |---------|--------|
 | `!class` or `!choose` | Open race/class selection UI |
-| `!classinfo` | View your current class + all abilities |
+| `!classinfo` | View your current class + all abilities + race passives |
 | `!reset` | Reset your class/race and choose again |
+| `!help` or `!commands` | Show the full command list in chat |
 
 ### How to Play
 1. Type `!class` to open the selection screen

@@ -1,10 +1,10 @@
 /**
  * Realms of Myth - Dragon Boss AI
- * Multi-phase dragon behavior: ground, aerial, enraged
- * Uses system.currentTick for reliable timing
+ * Multi-phase dragon behavior: ground, aerial, enraged.
+ * Uses system.runInterval(40) for 2-second poll cadence (cheap, no tick math).
  */
 
-import { world, system, Entity, Player } from '@minecraft/server';
+import { world, system } from '@minecraft/server';
 
 const DRAGON_TYPES = ['realms:dragon_fire', 'realms:dragon_frost'];
 
@@ -24,7 +24,7 @@ export function registerDragonAI() {
         checkAllDragons();
     }, 40);
 
-    // ── Clean up maps when a dragon dies ──────────────────
+    // Clean up maps when a dragon dies — kill whelps, free the entry
     world.afterEvents.entityDie.subscribe((event) => {
         const entity = event.deadEntity;
         if (!entity) return;
@@ -32,9 +32,7 @@ export function registerDragonAI() {
         if (type !== 'realms:dragon_fire' && type !== 'realms:dragon_frost') return;
 
         const did = entity.id;
-        // Remove from managedDragons
         managedDragons.delete(did);
-        // Kill all whelps associated with this dragon
         if (dragonWhelps.has(did)) {
             const wids = dragonWhelps.get(did);
             const dim = entity.dimension;
@@ -42,7 +40,7 @@ export function registerDragonAI() {
                 try {
                     const w = dim.getEntity(wid);
                     if (w && w.isValid()) w.remove();
-                } catch (e) {}
+                } catch (e) { /* chunk unload */ }
             }
             dragonWhelps.delete(did);
         }
@@ -50,7 +48,8 @@ export function registerDragonAI() {
 }
 
 /**
- * Scan all loaded dimensions for dragon entities
+ * Scan all loaded dimensions for dragon entities.
+ * Limited to overworld + nether per the README spawn rules (volcano, ice spikes).
  */
 function checkAllDragons() {
     try {
@@ -73,8 +72,8 @@ function checkAllDragons() {
         // Dimension may not be loaded
     }
 
-    // Prune dead entries from managedDragons
-    for (const [did, data] of managedDragons) {
+    // Prune dead entries from managedDragons (dragon may have died between polls)
+    for (const [did] of managedDragons) {
         let alive = false;
         for (const dimName of ['overworld', 'nether']) {
             try {
@@ -84,10 +83,9 @@ function checkAllDragons() {
                     alive = true;
                     break;
                 }
-            } catch (e) {}
+            } catch (e) { /* chunk unload */ }
         }
         if (!alive) {
-            // Dragon is dead/despawned — clean up whelps and managed entry
             if (dragonWhelps.has(did)) {
                 dragonWhelps.delete(did);
             }
@@ -132,43 +130,48 @@ function processDragon(dragon, dim) {
     managedDragons.set(dragonId, { phase, hp: hpPercent });
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 // PHASE TRANSITION
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 
 function announcePhase(dragon, phase, dim) {
     const isFire = dragon.typeId === 'realms:dragon_fire';
     const name = isFire ? '§cFire Dragon' : '§bFrost Dragon';
 
     let msg;
+    let soundEvent = 'mob.enderdragon.growl';
     switch (phase) {
         case 'ground':
             msg = `${name} §7descends to the ground!`;
             dim.runCommand(`execute at @e[type=${dragon.typeId},c=1] run particle minecraft:large_explosion ~~~`);
+            soundEvent = 'mob.enderdragon.growl';
             break;
         case 'aerial':
             msg = `${name} §7takes flight!`;
-            try { dragon.runCommand('effect @s levitation 999999 5 true'); } catch (e) {}
+            try { dragon.runCommand('effect @s levitation 999999 5 true'); } catch (e) { /* skip */ }
+            soundEvent = 'mob.enderdragon.flap';
             break;
         case 'enraged':
             msg = `${name} §4§lIS ENRAGED!`;
             dim.runCommand(`execute at @e[type=${dragon.typeId},c=1] run particle minecraft:angry_villager ~ ~ ~`);
             spawnWhelps(dragon, dim);
+            soundEvent = 'mob.enderdragon.death';
             break;
     }
 
     for (const player of world.getPlayers()) {
         player.sendMessage(msg);
     }
-    dim.runCommand(`playsound mob.enderdragon.growl @a ~~~ 1 0.5`);
+    dim.runCommand(`playsound ${soundEvent} @a ~~~ 1 ${phase === 'enraged' ? 0.7 : 0.5}`);
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 // PHASE 1: GROUND (>60% HP)
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 
 function executeGroundPhase(dragon, dim) {
-    try { dragon.runCommand('effect @s levitation 0 0'); } catch (e) {}
+    // Cancel any leftover levitation from a previous aerial phase
+    try { dragon.runCommand('effect @s levitation 0 0'); } catch (e) { /* skip */ }
 
     const roll = Math.random();
     if (roll < 0.04) {
@@ -178,18 +181,21 @@ function executeGroundPhase(dragon, dim) {
     }
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 // PHASE 2: AERIAL (30-60% HP)
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 
 function executeAerialPhase(dragon, dim) {
-    try { dragon.runCommand('effect @s levitation 40 8 true'); } catch (e) {}
+    // Re-apply levitation each poll in case it expired
+    try { dragon.runCommand('effect @s levitation 40 8 true'); } catch (e) { /* skip */ }
 
     const roll = Math.random();
     if (roll < 0.03) {
+        // Strafe breath
         dim.runCommand(`effect @p[r=12] instant_damage 1 2 true`);
         dim.runCommand(`execute at @e[type=${dragon.typeId},c=1] run particle minecraft:dragon_destroy_block ~ ~1 ~`);
     } else if (roll < 0.06) {
+        // Dive bomb — teleport above nearest player, slam down with AoE
         const players = world.getPlayers();
         if (players.length > 0) {
             const nearest = players.reduce((best, p) => {
@@ -206,14 +212,15 @@ function executeAerialPhase(dragon, dim) {
     }
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 // PHASE 3: ENRAGED (<30% HP)
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 
 function executeEnragedPhase(dragon, dim, dragonId) {
     const roll = Math.random();
 
     if (roll < 0.05) {
+        // Cataclysm AoE — large radius damage
         dim.runCommand(`effect @p[r=20] instant_damage 1 3 true`);
         dim.runCommand(`execute at @e[type=${dragon.typeId},c=1] run particle minecraft:huge_explosion_emitter ~~~`);
         dim.runCommand(`playsound ambient.weather.thunder @a ~~~ 1 0`);
@@ -222,21 +229,21 @@ function executeEnragedPhase(dragon, dim, dragonId) {
     maintainWhelps(dragon, dim, dragonId);
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 // WHELP SYSTEM
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 
 function spawnWhelps(dragon, dim) {
     const loc = dragon.location;
     const dragonId = dragon.id;
 
-    // Clear existing whelps
+    // Clear existing whelps from a previous enraged cycle
     if (dragonWhelps.has(dragonId)) {
         for (const wid of dragonWhelps.get(dragonId)) {
             try {
                 const w = dim.getEntity(wid);
                 if (w && w.isValid()) w.remove();
-            } catch (e) {}
+            } catch (e) { /* chunk unload */ }
         }
     }
     dragonWhelps.set(dragonId, []);
@@ -260,10 +267,10 @@ function maintainWhelps(dragon, dim, dragonId) {
     for (const wid of whelps) {
         try {
             const w = dim.getEntity(wid);
-            if (w && w.isValid() && w.getComponent('minecraft:health')?.currentValue > 0) {
+            if (w && w.isValid() && (w.getComponent('minecraft:health')?.currentValue || 0) > 0) {
                 alive.push(wid);
             }
-        } catch (e) {}
+        } catch (e) { /* chunk unload */ }
     }
 
     const missing = 3 - alive.length;
@@ -282,7 +289,7 @@ function maintainWhelps(dragon, dim, dragonId) {
 }
 
 /**
- * Programmatically spawn a dragon
+ * Programmatically spawn a dragon (utility for testing / scripted events).
  */
 export function spawnDragon(location, type = 'fire') {
     const dim = world.getDimension('overworld');

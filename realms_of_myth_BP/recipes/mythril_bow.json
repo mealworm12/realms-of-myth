@@ -2,26 +2,26 @@
   "format_version": "1.21.60",
   "minecraft:recipe_shaped": {
     "description": {
-      "identifier": "realms:dragon_bone_greatsword_craft"
+      "identifier": "realms:mythril_bow_craft"
     },
     "tags": [
       "crafting_table"
     ],
     "pattern": [
-      "  D",
-      "  D",
-      "  S"
+      " MS",
+      "M S",
+      " MS"
     ],
     "key": {
-      "D": {
-        "item": "realms:dragon_scale"
+      "M": {
+        "item": "realms:mythril_ingot"
       },
       "S": {
-        "item": "realms:mythril_sword"
+        "item": "minecraft:string"
       }
     },
     "result": {
-      "item": "realms:dragon_bone_greatsword"
+      "item": "realms:mythril_bow"
     }
   }
 }

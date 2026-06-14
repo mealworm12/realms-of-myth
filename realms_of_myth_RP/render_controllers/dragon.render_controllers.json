@@ -55,6 +55,17 @@
       "textures": [
         "textures/entity/elf_warrior"
       ]
+    },
+    "controller.render.dragon_whelp": {
+      "geometry": "geometry.realms.dragon_whelp",
+      "materials": [
+        {
+          "*": "material.default"
+        }
+      ],
+      "textures": [
+        "textures/entity/dragon_whelp"
+      ]
     }
   }
 }

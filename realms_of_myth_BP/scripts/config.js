@@ -1,10 +1,7 @@
 /**
  * Realms of Myth - Shared Configuration
- * All mod constants exported for use by other modules
+ * All mod constants exported for use by other modules.
  */
-
-export const MOD_ID = 'rom';
-export const MOD_PREFIX = 'realms';
 
 // Weapon Tiers
 export const WEAPON_TIERS = {
@@ -22,10 +19,10 @@ export const ARMOR_TIERS = {
     CLASS_MASTER: { tier: 4, defense: 20, protection: 0.72, bonus: 'class_unique' }
 };
 
-// Class Master Set Bonuses
+// Class Master Set Bonuses — keys match class IDs in classSystem.js
 export const CLASS_MASTER_BONUSES = {
     mage: { abilityDamageBonus: 0.30, name: 'Arcane Amplification' },
-    ranger: { speedBonus: 0.15, noFallDamage: true, name: 'Shadow\'s Grace' },
+    ranger: { speedBonus: 0.15, noFallDamage: true, name: "Shadow's Grace" },
     berserker: { lowHPDamageBonus: 0.25, name: 'Blood Fury' },
     paladin: { damageReflect: 0.10, name: 'Radiant Aegis' },
     druid: { permanentRegen: 0.5, name: 'Wildheart Vitality' }
@@ -33,7 +30,7 @@ export const CLASS_MASTER_BONUSES = {
 
 // Ability trigger items
 export const ABILITY_ITEMS = [
-    'minecraft:nether_star',    // Ability 1
-    'minecraft:blaze_powder',   // Ability 2
-    'minecraft:ghast_tear'      // Ability 3
+    'minecraft:nether_star',    // Ability slot 1 (☆)
+    'minecraft:blaze_powder',   // Ability slot 2 (🔥)
+    'minecraft:ghast_tear'      // Ability slot 3 (💧)
 ];

@@ -1,12 +1,11 @@
 /**
  * Realms of Myth - Class Selection UI
- * Handles the multi-step form for race + class selection using @minecraft/server-ui
+ * Handles the multi-step form for race + class selection using @minecraft/server-ui.
  */
 
-import { ActionFormData, ModalFormData, MessageFormData } from '@minecraft/server-ui';
-import { RACES, CLASSES, getRaceTraits, getClassAbilities } from './classSystem.js';
+import { ActionFormData } from '@minecraft/server-ui';
+import { RACES, CLASSES } from './classSystem.js';
 import { savePlayerData } from './playerData.js';
-import { Player } from '@minecraft/server';
 
 /**
  * Show the class selection form to a player.
@@ -24,16 +23,16 @@ function showRaceSelection(player) {
         .title('§lChoose Your Race')
         .body('Every hero begins somewhere. Choose your lineage:');
 
-    for (const [id, race] of Object.entries(RACES)) {
+    for (const [, race] of Object.entries(RACES)) {
         const traits = race.traits;
-        let desc = [];
-        if (traits.bowDamageBonus) desc.push(`+${Math.round(traits.bowDamageBonus*100)}% Bow Damage`);
+        const desc = [];
+        if (traits.bowDamageBonus) desc.push(`+${Math.round(traits.bowDamageBonus * 100)}% Bow Damage`);
         if (traits.nightVision) desc.push('Night Vision');
         if (traits.bonusHealth) desc.push(`+${traits.bonusHealth} HP`);
         if (traits.slowRegeneration) desc.push('Regeneration');
         if (traits.knockbackResistance) desc.push('Knockback Resist');
         if (traits.reachBonus) desc.push(`+${traits.reachBonus} Reach`);
-        if (traits.xpBonus) desc.push(`+${Math.round(traits.xpBonus*100)}% XP`);
+        if (traits.xpBonus) desc.push(`+${Math.round(traits.xpBonus * 100)}% XP`);
 
         form.button(`§e${race.name}\n§7${desc.join(' • ')}`);
     }
@@ -61,8 +60,8 @@ function showClassSelection(player, selectedRace) {
         .title(`§lChoose Your Class §7(${selectedRace.name})`)
         .body('The path you walk defines who you become:');
 
-    for (const [id, cls] of Object.entries(CLASSES)) {
-        let abilText = cls.abilities.map(a => a.name).join(', ');
+    for (const [, cls] of Object.entries(CLASSES)) {
+        const abilText = cls.abilities.map(a => a.name).join(', ');
         form.button(`§b${cls.name}\n§7${cls.description}\n§8Abilities: ${abilText}`);
     }
 
@@ -94,7 +93,7 @@ function showConfirmScreen(player, race, cls) {
             `§7${cls.description}`,
             ``,
             `§aAbilities:`
-        ].concat(cls.abilities.map((a, i) => `  §7${i+1}. §b${a.name}`)).join('\n'))
+        ].concat(cls.abilities.map((a, i) => `  §7${i + 1}. §b${a.name}`)).join('\n'))
         .button('§a✓ Confirm')
         .button('§c↩ Go Back');
 
@@ -121,6 +120,10 @@ function showConfirmScreen(player, race, cls) {
 export function finalizeClassSelection(player, raceId, classId) {
     const race = RACES[raceId];
     const cls = CLASSES[classId];
+    if (!race || !cls) {
+        player.sendMessage('§cInvalid race or class selection.');
+        return;
+    }
 
     // Clear pending
     player.setDynamicProperty('rom:race_pending', undefined);
@@ -144,18 +147,4 @@ export function finalizeClassSelection(player, raceId, classId) {
     player.playSound('random.levelup');
 
     console.log(`[Realms of Myth] ${player.name} chose ${race.name} ${cls.name}`);
-}
-
-/**
- * Handle class selection triggered by NPC interaction.
- * DEPRECATED: Class selection is now triggered via chat commands (!class) or
- * block interaction (Ancient Altar). Kept for backward compatibility if needed.
- */
-function handleClassSelection(player) {
-    const raceTag = player.getDynamicProperty('rom:race');
-    if (raceTag) {
-        player.sendMessage('§cYou have already chosen a path. Use §e!reset §cto begin anew.');
-        return;
-    }
-    showClassSelectionForm(player);
 }

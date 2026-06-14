@@ -15,6 +15,7 @@ OUT_DIR = REPO_ROOT
 
 def zip_dir(src_dir, dest_file):
     """Zip a directory into a .mcpack file, excluding .gitkeep."""
+    count = 0
     with zipfile.ZipFile(dest_file, 'w', zipfile.ZIP_DEFLATED) as zf:
         for root, dirs, files in os.walk(src_dir):
             # Skip .git directories
@@ -25,7 +26,8 @@ def zip_dir(src_dir, dest_file):
                 full = os.path.join(root, f)
                 arcname = os.path.relpath(full, src_dir)
                 zf.write(full, arcname)
-    print(f"  Created: {dest_file}")
+                count += 1
+    return count
 
 def main():
     print("Building Realms of Myth .mcaddon...\n")
@@ -36,11 +38,13 @@ def main():
 
     # Step 1: Create BP .mcpack
     print("[1/3] Packaging Behavior Pack...")
-    zip_dir(BP_DIR, bp_pack)
+    bp_count = zip_dir(BP_DIR, bp_pack)
+    print(f"       {bp_count} files")
 
     # Step 2: Create RP .mcpack
     print("[2/3] Packaging Resource Pack...")
-    zip_dir(RP_DIR, rp_pack)
+    rp_count = zip_dir(RP_DIR, rp_pack)
+    print(f"       {rp_count} files")
 
     # Step 3: Bundle into .mcaddon
     print("[3/3] Creating .mcaddon bundle...")
@@ -53,7 +57,7 @@ def main():
     os.remove(rp_pack)
 
     size_kb = os.path.getsize(addon) / 1024
-    print(f"\n✅ Done! {addon} ({size_kb:.1f} KB)")
+    print(f"\n✅ Done! {addon} ({size_kb:.1f} KB, {bp_count + rp_count} files)")
 
 if __name__ == '__main__':
     main()
