@@ -7,7 +7,7 @@ import { world, system, Player } from '@minecraft/server';
 import { CLASSES } from './classSystem.js';
 import { restorePlayerState, resetPlayerData } from './playerData.js';
 import { showClassSelectionForm } from './classSelection.js';
-import { registerAbilities, clearCooldowns } from './abilities.js';
+import { registerAbilities } from './abilities.js';
 import { registerDragonAI } from './dragonBoss.js';
 
 console.log('[Realms of Myth] Initializing...');
@@ -45,9 +45,11 @@ world.afterEvents.playerJoin.subscribe((event) => {
     }
 });
 
-// ── Player Leave cleanup ─────────────────────────────────
+// ── Player Leave cleanup (cooldown cleanup is handled in abilities.js) ─
 world.afterEvents.playerLeave.subscribe((event) => {
-    clearCooldowns(event.playerId);
+    // Intentionally a no-op: per-ability cooldown + bloodlust cleanup lives
+    // in abilities.js to avoid duplicate subscriptions. Kept here as an
+    // extension point in case future per-player state needs cleanup.
 });
 
 // ── Entity Interact: Oracle opens class selection ────────

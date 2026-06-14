@@ -94,7 +94,8 @@ export function registerAbilities() {
         }
     }, 1);
 
-    // ── Player leave cleanup ─────────────────────────────
+    // ── Player leave cleanup (main.js also subscribes, but only calls
+    //    clearCooldowns which is idempotent — keeping one source of truth here) ─
     world.afterEvents.playerLeave.subscribe((event) => {
         const pid = event.playerId;
         cooldowns.delete(pid);
@@ -222,8 +223,7 @@ export function registerAbilities() {
             }
         }
     });
-
-});
+}
 
 function getCooldownMap(playerId) {
     if (!cooldowns.has(playerId)) cooldowns.set(playerId, new Map());

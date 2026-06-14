@@ -46,7 +46,8 @@ export function loadPlayerData(player) {
 export function resetPlayerData(player) {
     const props = ['rom:race', 'rom:class', 'rom:level', 'rom:has_chosen',
                    'rom:bloodlust_active', 'rom:bloodlust_end', 'rom:human_xp_bonus',
-                   'rom:bow_damage_bonus', 'rom:human_skill_points'];
+                   'rom:bow_damage_bonus', 'rom:human_skill_points',
+                   'rom:master_bonus_announced', 'rom:troll_hp_applied'];
     for (const key of props) {
         player.setDynamicProperty(key, undefined);
     }
@@ -83,11 +84,21 @@ export function applyRaceTraits(player) {
     const traits = race.traits;
 
     // Troll: bonus max HP + slow regeneration
+    // Use health_boost effect (each level = +2 HP / +1 heart) for permanent +max HP.
+    // health.setCurrentValue() is transient — lost on next heal/damage tick.
     if (traits.bonusHealth) {
         const health = player.getComponent('minecraft:health');
         if (health) {
-            const effectiveMax = health.effectiveMax || 20;
-            health.setCurrentValue(effectiveMax + traits.bonusHealth);
+            // health_boost: level N => +2*N HP added to effectiveMax
+            const boostLevel = Math.ceil(traits.bonusHealth / 2);
+            player.runCommand(`effect @s health_boost 999999 ${boostLevel} true`);
+            // On first apply, clamp current HP up to the new effective max
+            const announced = player.getDynamicProperty('rom:troll_hp_applied');
+            if (announced !== raceId) {
+                const newMax = health.effectiveMax + traits.bonusHealth;
+                health.setCurrentValue(Math.min(newMax, health.currentValue + traits.bonusHealth));
+                player.setDynamicProperty('rom:troll_hp_applied', raceId);
+            }
         }
     }
     if (traits.slowRegeneration) {
@@ -200,11 +211,20 @@ export function applyClassMasterBonuses(player) {
     if (!isFullSet) {
         // Clear any previous bonuses
         player.setDynamicProperty('rom:class_master_bonus', undefined);
+        player.setDynamicProperty('rom:master_bonus_announced', undefined);
         return;
     }
 
     // Apply the bonus
     player.setDynamicProperty('rom:class_master_bonus', classId);
+
+    // Only send the announcement once per (class, equip) state — re-equipping
+    // or dying and respawning will not spam chat.
+    const announced = player.getDynamicProperty('rom:master_bonus_announced');
+    if (announced === classId) {
+        return;
+    }
+    player.setDynamicProperty('rom:master_bonus_announced', classId);
 
     switch (classId) {
         case 'mage':

@@ -3,9 +3,6 @@
  * All mod constants exported for use by other modules
  */
 
-export const MOD_ID = 'rom';
-export const MOD_PREFIX = 'realms';
-
 // Weapon Tiers
 export const WEAPON_TIERS = {
     IRON: { tier: 1, damageBonus: 0, material: 'iron' },
@@ -31,7 +28,7 @@ export const CLASS_MASTER_BONUSES = {
     druid: { permanentRegen: 0.5, name: 'Wildheart Vitality' }
 };
 
-// Ability trigger items
+// Ability trigger items (referenced in config.js — kept here for clarity)
 export const ABILITY_ITEMS = [
     'minecraft:nether_star',    // Ability 1
     'minecraft:blaze_powder',   // Ability 2
