@@ -14,7 +14,28 @@
       },
       "render_controllers": [
         "controller.render.troll_brute"
-      ]
+      ],
+      "animations": {
+        "idle": "animation.troll_brute.idle",
+        "walk": "animation.troll_brute.walk",
+        "attack": "animation.troll_brute.attack",
+        "hurt": "animation.troll_brute.hurt",
+        "death": "animation.troll_brute.death",
+        "move_ctrl": "controller.animation.troll_brute.movement",
+        "death_ctrl": "controller.animation.troll_brute.death",
+        "head_track": "animation.mob.head_track"
+      },
+      "scripts": {
+        "animate": [
+          "move_ctrl",
+          "death_ctrl",
+          "head_track"
+        ]
+      },
+      "spawn_egg": {
+        "base_color": "0x6B8E23",
+        "overlay_color": "0x4B3621"
+      }
     }
   }
 }

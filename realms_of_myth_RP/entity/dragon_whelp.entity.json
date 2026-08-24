@@ -16,12 +16,21 @@
         "controller.render.dragon_whelp"
       ],
       "animations": {
-        "idle": "animation.dragon_whelp.idle"
+        "idle": "animation.dragon_whelp.idle",
+        "fly": "animation.dragon_whelp.fly",
+        "walk": "animation.dragon_whelp.walk",
+        "attack": "animation.dragon_whelp.attack",
+        "move_ctrl": "controller.animation.dragon_whelp.movement",
+        "hurt": "animation.dragon_whelp.hurt"
       },
       "scripts": {
         "animate": [
-          "idle"
+          "move_ctrl"
         ]
+      },
+      "spawn_egg": {
+        "base_color": "0xB03A2E",
+        "overlay_color": "0xF5B041"
       }
     }
   }

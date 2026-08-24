@@ -14,7 +14,26 @@
       },
       "render_controllers": [
         "controller.render.giant_colossus"
-      ]
+      ],
+      "animations": {
+        "idle": "animation.giant_colossus.idle",
+        "walk": "animation.giant_colossus.walk",
+        "attack": "animation.giant_colossus.attack",
+        "hurt": "animation.giant_colossus.hurt",
+        "death": "animation.giant_colossus.death",
+        "move_ctrl": "controller.animation.giant_colossus.movement",
+        "death_ctrl": "controller.animation.giant_colossus.death"
+      },
+      "scripts": {
+        "animate": [
+          "move_ctrl",
+          "death_ctrl"
+        ]
+      },
+      "spawn_egg": {
+        "base_color": "0x808080",
+        "overlay_color": "0x404040"
+      }
     }
   }
 }
