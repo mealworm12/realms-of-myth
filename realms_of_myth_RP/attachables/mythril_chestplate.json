@@ -1,0 +1,25 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "realms:mythril_chestplate",
+      "materials": {
+        "default": "armor",
+        "enchanted": "armor_enchanted"
+      },
+      "textures": {
+        "default": "textures/armor/mythril_humanoid",
+        "enchanted": "textures/misc/enchanted_item_glint"
+      },
+      "geometry": {
+        "default": "geometry.humanoid.armor.chestplate"
+      },
+      "render_controllers": [
+        "controller.render.armor"
+      ],
+      "scripts": {
+        "parent_setup": "variable.chest_layer_visible = 0.0;"
+      }
+    }
+  }
+}

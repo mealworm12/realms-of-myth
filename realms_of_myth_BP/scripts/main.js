@@ -12,6 +12,12 @@ import { restorePlayerState, resetPlayerData, loadPlayerData, applyClassMasterBo
 import { showClassSelectionForm } from './classSelection.js';
 import { registerAbilities } from './abilities.js';
 import { registerDragonAI } from './dragonBoss.js';
+import { registerQuests, startQuestChain, questStatus } from './quests.js';
+import { registerMythicWeapons } from './mythicWeapons.js';
+import { registerTaming, tryBreathAttack } from './dragonRiding.js';
+import { handleAltarRitual } from './altar.js';
+import { tickPrestigeAuras } from './altar.js';
+import { registerScaling } from './difficultyScaling.js';
 
 console.log('[Realms of Myth] Initializing...');
 
@@ -19,6 +25,15 @@ console.log('[Realms of Myth] Initializing...');
 world.afterEvents.worldInitialize.subscribe(() => {
     console.log('[Realms of Myth] World initialized');
     registerDragonAI();
+    registerQuests();
+    registerMythicWeapons();
+    registerTaming();
+    registerScaling();
+
+    // Prestige aura renderer (every second)
+    system.runInterval(() => {
+        try { tickPrestigeAuras(); } catch (e) { /* */ }
+    }, 20);
 });
 
 // ── Player Spawn (respawn) ──────────────────────────────────────────
@@ -81,6 +96,12 @@ const CLASS_TOKENS = new Set([
 world.afterEvents.itemUse.subscribe((event) => {
     const player = event.source;
     const item = event.itemStack;
+
+    // Dragon breath attack while mounted (any item right-click)
+    try {
+        if (tryBreathAttack(player)) return;
+    } catch (e) { /* not mounted */ }
+
     if (!item || !CLASS_TOKENS.has(item.typeId)) return;
 
     // Extract classId from item id: 'realms:class_token_X' -> 'X'
@@ -138,14 +159,23 @@ world.afterEvents.playerInteractWithBlock.subscribe((event) => {
     if (block.typeId === 'realms:ancient_altar') {
         const raceTag = player.getDynamicProperty('rom:race');
         const hasChosen = player.getDynamicProperty('rom:has_chosen');
+        // Pending mythic reward from an interrupted ritual completion
+        if (player.getDynamicProperty('rom:mythic_reward_pending')) {
+            player.setDynamicProperty('rom:mythic_reward_pending', undefined);
+            import('./altar.js').then(m => m.showMythicPicker(player));
+            return;
+        }
         if (!raceTag || !hasChosen) {
             player.sendMessage('§6§lThe Ancient Altar hums with ancient power...');
             system.runTimeout(() => showClassSelectionForm(player), 5);
+        } else if (handleAltarRitual(player, block)) {
+            // Ritual or prestige UI handled inside
         } else {
             const cls = player.getDynamicProperty('rom:class');
             const clsData = CLASSES[cls];
             player.sendMessage(`§7The Altar recognizes you: §e§l${raceTag} ${clsData ? clsData.name : cls}§r§7. Use §e!classinfo §7to review abilities.`);
         }
+        return;
     }
 });
 
@@ -190,6 +220,9 @@ world.beforeEvents.chatSend.subscribe((event) => {
                 player.sendMessage({ rawtext: [{ text: `  §7• §e${k}§7: ${typeof v === 'boolean' ? v : v}` }] });
             }
         }
+    } else if (msg === '!quest') {
+        event.cancel = true;
+        questStatus(player);
     } else if (msg === '!help' || msg === '!commands') {
         event.cancel = true;
         player.sendMessage({
@@ -198,6 +231,7 @@ world.beforeEvents.chatSend.subscribe((event) => {
                 { text: '§a!class §7/ §a!choose §7— open race & class selection\n' },
                 { text: '§a!classinfo §7— show your class abilities + race passives\n' },
                 { text: '§a!reset §7— reset your race & class (re-pick)\n' },
+                { text: '§a!quest §7— show your current Chronicle quest\n' },
                 { text: '§a!help §7— show this list\n' },
                 { text: '§7Abilities: hold Nether Star (☆), Blaze Powder (🔥), Ghast Tear (💧) + right-click\n' },
                 { text: '§7Find the Ancient Altar or speak to the Oracle to start.\n' },

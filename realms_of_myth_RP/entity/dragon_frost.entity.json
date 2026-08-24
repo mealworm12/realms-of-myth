@@ -13,11 +13,14 @@
         "default": "geometry.realms.dragon_frost"
       },
       "render_controllers": [
-        "controller.render.dragon_fire"
+        "controller.render.dragon_frost"
       ],
       "animations": {
         "wing_flap": "animation.dragon_frost.wing_flap",
-        "breath": "animation.dragon_frost.breath"
+        "breath": "animation.dragon_frost.breath",
+        "tail_swipe": "animation.dragon_frost.tail_swipe",
+        "roar": "animation.dragon_frost.roar",
+        "phase_ctrl": "controller.animation.dragon_frost.phase"
       },
       "particle_effects": {
         "breath_frost": "realms:dragon_breath_frost",
@@ -25,8 +28,13 @@
       },
       "scripts": {
         "animate": [
-          "wing_flap"
+          "wing_flap",
+          "phase_ctrl"
         ]
+      },
+      "spawn_egg": {
+        "base_color": "0x7FB3D5",
+        "overlay_color": "0xEAF2F8"
       }
     }
   }

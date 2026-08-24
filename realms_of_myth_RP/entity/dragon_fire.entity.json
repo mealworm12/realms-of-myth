@@ -17,7 +17,10 @@
       ],
       "animations": {
         "wing_flap": "animation.dragon_fire.wing_flap",
-        "breath": "animation.dragon_fire.breath"
+        "breath": "animation.dragon_fire.breath",
+        "tail_swipe": "animation.dragon_fire.tail_swipe",
+        "roar": "animation.dragon_fire.roar",
+        "phase_ctrl": "controller.animation.dragon_fire.phase"
       },
       "particle_effects": {
         "breath_fire": "realms:dragon_breath_fire",
@@ -25,8 +28,13 @@
       },
       "scripts": {
         "animate": [
-          "wing_flap"
+          "wing_flap",
+          "phase_ctrl"
         ]
+      },
+      "spawn_egg": {
+        "base_color": "0xB03A2E",
+        "overlay_color": "0xF5B041"
       }
     }
   }

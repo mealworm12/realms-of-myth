@@ -1,0 +1,35 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:item": {
+    "description": {
+      "identifier": "realms:void_reaver",
+      "menu_category": {
+        "category": "equipment",
+        "group": "minecraft:sword"
+      }
+    },
+    "components": {
+      "minecraft:max_stack_size": 1,
+      "minecraft:max_damage": 2500,
+      "minecraft:damage": 10,
+      "minecraft:enchantable": {
+        "value": 28,
+        "slot": "sword"
+      },
+      "minecraft:repairable": {
+        "repair_items": [
+          {
+            "items": ["realms:mythril_ingot"],
+            "repair_amount": 625
+          }
+        ]
+      },
+      "minecraft:icon": "void_reaver",
+      "minecraft:display_name": {
+        "value": "Void Reaver"
+      },
+      "minecraft:glint": true,
+      "minecraft:hand_equipped": true
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "realms:dawnbreaker_craft"
+    },
+    "tags": ["crafting_table"],
+    "pattern": [
+      "NH ",
+      "MS ",
+      " S "
+    ],
+    "key": {
+      "N": { "item": "minecraft:nether_star" },
+      "H": { "item": "realms:dragon_heart" },
+      "M": { "item": "realms:mythril_ingot" },
+      "S": { "item": "realms:mythril_sword" }
+    },
+    "result": {
+      "item": "realms:dawnbreaker"
+    }
+  }
+}

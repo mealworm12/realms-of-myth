@@ -1,6 +1,36 @@
 {
   "format_version": "1.10.0",
   "render_controllers": {
+    "controller.render.dawnbreaker": {
+      "geometry": "geometry.dawnbreaker",
+      "materials": [
+        { "*": "variable.is_enchanted ? material.enchanted : material.default" }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    },
+    "controller.render.void_reaver": {
+      "geometry": "geometry.void_reaver",
+      "materials": [
+        { "*": "variable.is_enchanted ? material.enchanted : material.default" }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    },
+    "controller.render.stormcaller_hammer": {
+      "geometry": "geometry.stormcaller_hammer",
+      "materials": [
+        { "*": "variable.is_enchanted ? material.enchanted : material.default" }
+      ],
+      "textures": [
+        "texture.default",
+        "texture.enchanted"
+      ]
+    },
     "controller.render.mythril_sword": {
       "geometry": "geometry.mythril_sword",
       "materials": [

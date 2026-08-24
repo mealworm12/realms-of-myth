@@ -5,6 +5,7 @@
  */
 
 import { world, system } from '@minecraft/server';
+import { makeWhelpPet } from './dragonRiding.js';
 
 const DRAGON_TYPES = ['realms:dragon_fire', 'realms:dragon_frost'];
 
@@ -255,6 +256,19 @@ function spawnWhelps(dragon, dim) {
             y: loc.y,
             z: loc.z + Math.sin(angle) * 5
         });
+        // Whelps from an enraged dragon can be tamed as pets by nearby players
+        try {
+            let nearest = null, bestDist = 24;
+            for (const p of world.getPlayers()) {
+                if (p.dimension.id !== dim.id) continue;
+                const d = Math.hypot(p.location.x - whelp.location.x, p.location.z - whelp.location.z);
+                if (d < bestDist) { bestDist = d; nearest = p; }
+            }
+            if (nearest && Math.random() < 0.5) {
+                makeWhelpPet(whelp, nearest);
+                nearest.sendMessage('§bA dragon whelp imprints on you! Interact with it to make it sit or follow.');
+            }
+        } catch (e) { /* */ }
         dragonWhelps.get(dragonId).push(whelp.id);
     }
     dim.runCommand('playsound mob.enderdragon.growl @a ~~~ 1 0.8');
