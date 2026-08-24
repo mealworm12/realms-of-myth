@@ -305,7 +305,7 @@ export function tryBreathAttack(player) {
                 { x: px, y: py, z: pz });
         } catch (e) { /* */ }
     }
-    player.playSound(isFrost ? 'mob.blaze.shoot' : 'entity.dragon_fire.roar');
+    player.playSound(isFrost ? 'realms.ability.arcane_teleport_cast' : 'entity.dragon_fire.roar');
     player.sendMessage(hitCount > 0 ? `§d🔥 Dragon breath scorches ${hitCount} target(s)!` : '§d🔥 Dragon breath roars forth!');
     return true;
 }
