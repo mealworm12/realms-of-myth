@@ -63,15 +63,15 @@
         "table": "loot_tables/entities/giant_colossus.json"
       },
       "minecraft:ambient_sound": {
-        "sound": "entity.giant.stomp",
+        "sound": "entity.giant_colossus.ambient",
         "interval": 200,
         "range": 16.0
       },
       "minecraft:hurt_sound": {
-        "sound": "mob.irongolem.hit"
+        "sound": "entity.giant_colossus.hurt"
       },
       "minecraft:death_sound": {
-        "sound": "mob.irongolem.death"
+        "sound": "entity.giant_colossus.death"
       },
       "minecraft:boss": {
         "name": "Giant Colossus",
