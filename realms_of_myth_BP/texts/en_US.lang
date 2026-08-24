@@ -68,3 +68,8 @@ entity.realms:dragon_whelp.name=Dragon Whelp
 entity.realms:elf_warrior.name=The Oracle
 entity.realms:troll_brute.name=Troll Brute
 entity.realms:giant_colossus.name=Giant Colossus
+
+## ── Mythic Tier (v0.3.0) ──
+item.realms:dawnbreaker.name=Dawnbreaker
+item.realms:void_reaver.name=Void Reaver
+item.realms:stormcaller_hammer.name=Stormcaller Hammer
