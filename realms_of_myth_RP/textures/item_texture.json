@@ -145,6 +145,15 @@
     },
     "druid_master_boots": {
       "textures": "textures/items/druid_master_boots"
+    },
+    "dawnbreaker": {
+      "textures": "textures/items/dawnbreaker"
+    },
+    "stormcaller_hammer": {
+      "textures": "textures/items/stormcaller_hammer"
+    },
+    "void_reaver": {
+      "textures": "textures/items/void_reaver"
     }
   }
 }

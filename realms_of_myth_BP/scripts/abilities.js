@@ -329,7 +329,9 @@ function applyShield(player, ability, effect, level) {
         : 'realms.ability.divine_shield_cast';
     player.playSound(soundId);
     try {
-        player.dimension.spawnParticle('realms:divine_shield_aura', {
+        player.dimension.spawnParticle(ability.id === 'ice_shield'
+            ? 'realms:frost_nova_ring'
+            : 'realms:divine_shield_aura', {
             x: player.location.x, y: player.location.y + 1, z: player.location.z
         });
     } catch (e) { /* particle may not resolve */ }
