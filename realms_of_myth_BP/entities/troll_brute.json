@@ -63,10 +63,10 @@
         "range": 10.0
       },
       "minecraft:hurt_sound": {
-        "sound": "mob.zombie.hurt"
+        "sound": "entity.troll_brute.hurt"
       },
       "minecraft:death_sound": {
-        "sound": "mob.zombie.death"
+        "sound": "entity.troll_brute.death"
       },
       "minecraft:physics": {},
       "minecraft:pushable": {

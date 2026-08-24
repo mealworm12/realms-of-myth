@@ -68,10 +68,10 @@
         "range": 24.0
       },
       "minecraft:hurt_sound": {
-        "sound": "mob.enderdragon.hit"
+        "sound": "entity.dragon_fire.hurt"
       },
       "minecraft:death_sound": {
-        "sound": "mob.enderdragon.death"
+        "sound": "entity.dragon_fire.death"
       },
       "minecraft:physics": {},
       "minecraft:pushable": {
