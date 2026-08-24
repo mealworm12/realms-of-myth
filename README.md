@@ -63,6 +63,8 @@ Use abilities in combat by holding **Nether Star** (slot 1), **Blaze Powder** (s
 
 **Class Master bonuses:** Mage (+30% ability damage), Ranger (+15% speed, no fall damage), Berserker (+25% damage <50% HP), Paladin (10% damage reflect), Druid (permanent regeneration)
 
+✅ All armor sets fully textured & wearable — worn layers + attachables for all 28 pieces.
+
 **How to craft Class Master armor** — see [Crafting Master Armor](#-crafting-master-armor).
 
 ---
