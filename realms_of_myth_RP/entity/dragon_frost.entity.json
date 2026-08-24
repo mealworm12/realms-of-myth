@@ -19,6 +19,10 @@
         "wing_flap": "animation.dragon_frost.wing_flap",
         "breath": "animation.dragon_frost.breath"
       },
+      "particle_effects": {
+        "breath_frost": "realms:dragon_breath_frost",
+        "enrage": "realms:phase_enrage"
+      },
       "scripts": {
         "animate": [
           "wing_flap"
