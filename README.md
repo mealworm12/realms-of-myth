@@ -38,7 +38,7 @@ Use abilities in combat by holding **Nether Star** (slot 1), **Blaze Powder** (s
 - Whelps are tracked by the boss and respawn if killed (1-2 per cycle)
 - Phase transitions trigger unique sound events (death roar, wing flap, growl)
 
-### 🗡️ 4 Weapon Tiers
+### 🗡️ 5 Weapon Tiers
 
 | Tier | Damage Bonus | Example |
 |------|:---:|------|
@@ -46,6 +46,23 @@ Use abilities in combat by holding **Nether Star** (slot 1), **Blaze Powder** (s
 | T2: Mythril | +3 | Mythril Sword, Mythril Bow, Dragonslayer Spear, Magic Staff |
 | T3: Dragon Bone | +6 | Dragon Bone Greatsword, Troll Warhammer, Elven Dagger |
 | T4: Legendary | +9 | Shadowfang Dagger, Giant's Club, Enchanted Bow |
+| T5: **Mythic** | +12 | Dawnbreaker, Void Reaver, Stormcaller Hammer |
+
+**Mythic weapon specials (v0.3.0):**
+
+- ☀️ **Dawnbreaker** — holy greatsword; 20% chance per hit to unleash a radiant AoE smite against undead and dragons (gold particle burst).
+- 🌑 **Void Reaver** — shadow dagger; 35% chance on hit to teleport you behind your target in a swirl of dark particles.
+- ⚡ **Stormcaller Hammer** — every hit calls a real lightning bolt onto the target (5s internal cooldown).
+
+Craft them at the crafting table with Nether Star cores, Dragon Hearts and Mythril.
+
+### ✨ New in v0.3.0 — Gameplay Expansion
+
+- **📜 Chronicles of the Realm (quest chain)** — 8 progressive quests: kill quests (whelp, troll, giant, dragon), collect quests (mythril, dragon heart), craft/wear milestones. Rewards include loot, XP levels, title messages and sound stings. Track progress with `!quest`.
+- **🐉 Dragon taming & riding** — bring an adult Fire or Frost Dragon below 30% HP to make it tameable, feed it Mythril Ingots to earn its loyalty, saddle it, and ride it with view-direction steering. Right-click any item while mounted to unleash a breath attack (6s cooldown). Dragon whelps from enraged dragons may imprint as follow/sit pets.
+- **🔮 Ancient Altar rituals** — right-click the altar with 1 Dragon Heart + 4 Mythril Ingots to summon an elite guardian wave (3 buffed, glowing, named mobs). Slay all three to choose a guaranteed Mythic weapon via UI picker.
+- **🌍 Difficulty scaling** — hostile mobs scale HP/damage by distance from world spawn: <2k blocks ×1.0, 2k–8k ×1.5, >8k ×2.25.
+- **✦ Class prestige** — reach level 30 and touch the Ancient Altar to ascend: level resets to 1, but you gain permanent stacking +2 max HP per prestige and an eternal class-colored particle aura.
 
 **Legendary weapon specials:**
 - **Dragonslayer Spear** — double damage vs dragons
@@ -243,7 +260,14 @@ Phase 11: Testing Documentation   ███████████████�
 
 ## 📝 Changelog
 
-### v0.2.0 — Gap Closure (current)
+### v0.3.0 — Gameplay Expansion (current)
+- **Quest system:** 8-quest "Chronicles of the Realm" chain with kill/collect/craft/boss objectives, loot + XP rewards, titles and sound stings (`scripts/quests.js`, `!quest` command)
+- **Mythic tier:** Dawnbreaker, Void Reaver, Stormcaller Hammer — items, recipes, geo models, attachables, render controllers, textures (`texture-sources/gen_mythic_aaa.py`) and script procs (`scripts/mythicWeapons.js`)
+- **Dragon taming & riding** with breath attack + whelp pets (`scripts/dragonRiding.js`)
+- **Ancient Altar rituals:** elite guardian wave → Mythic weapon picker; class prestige at level 30+ (`scripts/altar.js`)
+- **Difficulty scaling by distance from world spawn** (`scripts/difficultyScaling.js`)
+
+### v0.2.0 — Gap Closure
 - **Class Tokens now work:** right-click a token to pre-select that class in the selection form
 - **20 new recipes** for Class Master armor (5 sets × 4 pieces) using Dragon Hearts + theme materials
 - **Ancient Altar** now drops 1-3 random Class Tokens (loot table added)

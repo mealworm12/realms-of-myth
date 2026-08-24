@@ -1,0 +1,29 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.stormcaller_hammer",
+        "texture_width": 32,
+        "texture_height": 32
+      },
+      "bones": [
+        {
+          "name": "handle",
+          "pivot": [0, 8, 0],
+          "cubes": [
+            { "origin": [-0.5, 0, -0.5], "size": [1, 10, 1], "uv": [0, 20] }
+          ]
+        },
+        {
+          "name": "head",
+          "pivot": [0, 8, 0],
+          "cubes": [
+            { "origin": [-3, 10, -2], "size": [6, 5, 4], "uv": [0, 0] },
+            { "origin": [-3.5, 15, -2.5], "size": [7, 1, 5], "uv": [0, 12] }
+          ]
+        }
+      ]
+    }
+  ]
+}

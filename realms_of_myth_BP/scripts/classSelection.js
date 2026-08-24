@@ -9,6 +9,7 @@
 import { ActionFormData } from '@minecraft/server-ui';
 import { RACES, CLASSES } from './classSystem.js';
 import { savePlayerData } from './playerData.js';
+import { startQuestChain } from './quests.js';
 
 /**
  * Show the class selection form to a player.
@@ -148,6 +149,7 @@ export function finalizeClassSelection(player, raceId, classId) {
 
     // Save permanent data
     savePlayerData(player, { race: raceId, class: classId, level: 1 });
+    startQuestChain(player);
 
     // Welcome the player (no token is given here — tokens are only given
     // via the loot/treasure flow, not as a result of selection)
