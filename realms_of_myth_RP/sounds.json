@@ -19,16 +19,52 @@
       }
     ]
   },
+  "entity.dragon_fire.hurt": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/dragon_roar",
+        "volume": 0.9,
+        "pitch": 0.95
+      }
+    ]
+  },
+  "entity.dragon_fire.death": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/dragon_roar",
+        "volume": 1.0,
+        "pitch": 0.65
+      }
+    ]
+  },
+  "entity.dragon_frost.hurt": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/dragon_frost_hurt",
+        "volume": 0.9
+      }
+    ]
+  },
+  "entity.dragon_frost.death": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/dragon_frost_hurt",
+        "volume": 1.0,
+        "pitch": 0.8
+      }
+    ]
+  },
   "entity.dragon_fire.flap": {
     "category": "neutral",
     "sounds": [
       {
         "name": "sounds/mob/dragon_wing_flap",
         "volume": 0.7,
-        "pitch": [
-          0.8,
-          1.2
-        ]
+        "pitch": [0.8, 1.2]
       }
     ]
   },
@@ -38,10 +74,7 @@
       {
         "name": "sounds/mob/dragon_wing_flap",
         "volume": 0.7,
-        "pitch": [
-          1.0,
-          1.4
-        ]
+        "pitch": [1.0, 1.4]
       }
     ]
   },
@@ -61,10 +94,129 @@
       {
         "name": "sounds/mob/troll_grunt",
         "volume": 0.9,
-        "pitch": [
-          0.7,
-          1.1
-        ]
+        "pitch": [0.7, 1.1]
+      }
+    ]
+  },
+  "entity.troll_brute.ambient": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/troll_grunt",
+        "volume": 0.8,
+        "pitch": [0.7, 1.1]
+      }
+    ]
+  },
+  "entity.troll_brute.hurt": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/troll_bark",
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.troll_brute.death": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/troll_death",
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.elf_warrior.ambient": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "sounds/mob/elf_hum",
+        "volume": 0.7
+      }
+    ]
+  },
+  "entity.elf_warrior.hurt": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "sounds/mob/elf_hurt",
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.elf_warrior.death": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "sounds/mob/elf_death",
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.giant_colossus.ambient": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/colossus_voice",
+        "volume": 1.0,
+        "pitch": [0.85, 1.15]
+      }
+    ]
+  },
+  "entity.giant_colossus.hurt": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/colossus_hurt",
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.giant_colossus.death": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "sounds/mob/colossus_death",
+        "volume": 1.0
+      }
+    ]
+  },
+  "entity.dragon_whelp.ambient": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "sounds/mob/whelp_chirp",
+        "volume": 0.8,
+        "pitch": [0.9, 1.2]
+      }
+    ]
+  },
+  "entity.dragon_whelp.hurt": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "sounds/mob/whelp_screech",
+        "volume": 1.0,
+        "pitch": [0.9, 1.1]
+      }
+    ]
+  },
+  "entity.dragon_whelp.death": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "sounds/mob/whelp_death",
+        "volume": 1.0
+      }
+    ]
+  },
+  "block.ancient_altar.ambient": {
+    "category": "ambient",
+    "sounds": [
+      {
+        "name": "sounds/block/altar_drone",
+        "volume": 0.4,
+        "pitch": [0.95, 1.05]
       }
     ]
   },
@@ -112,5 +264,73 @@
         "volume": 0.5
       }
     ]
+  },
+  "realms.ability.fireball_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/fireball_cast", "volume": 0.8 }]
+  },
+  "realms.ability.ice_shield_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/ice_shield_cast", "volume": 0.8 }]
+  },
+  "realms.ability.arcane_teleport_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/arcane_teleport_cast", "volume": 0.8 }]
+  },
+  "realms.ability.multi_shot_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/multi_shot_cast", "volume": 0.8 }]
+  },
+  "realms.ability.shadow_step_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/shadow_step_cast", "volume": 0.8 }]
+  },
+  "realms.ability.eagle_eye_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/eagle_eye_cast", "volume": 0.8 }]
+  },
+  "realms.ability.rage_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/rage_cast", "volume": 0.9 }]
+  },
+  "realms.ability.ground_slam_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/ground_slam_cast", "volume": 0.9 }]
+  },
+  "realms.ability.bloodlust_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/bloodlust_cast", "volume": 0.8 }]
+  },
+  "realms.ability.holy_light_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/holy_light_cast", "volume": 0.8 }]
+  },
+  "realms.ability.divine_shield_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/divine_shield_cast", "volume": 0.8 }]
+  },
+  "realms.ability.smite_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/smite_cast", "volume": 0.9 }]
+  },
+  "realms.ability.wolf_form_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/wolf_form_cast", "volume": 0.8 }]
+  },
+  "realms.ability.entangling_roots_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/entangling_roots_cast", "volume": 0.8 }]
+  },
+  "realms.ability.natures_blessing_cast": {
+    "category": "player",
+    "sounds": [{ "name": "sounds/ability/natures_blessing_cast", "volume": 0.8 }]
+  },
+  "realms.music.battle_start": {
+    "category": "music",
+    "sounds": [{ "name": "sounds/music/battle_start", "volume": 0.9 }]
+  },
+  "realms.music.battle_stop": {
+    "category": "music",
+    "sounds": [{ "name": "sounds/music/battle_stop", "volume": 0.9 }]
   }
 }

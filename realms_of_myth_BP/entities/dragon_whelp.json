@@ -50,18 +50,16 @@
         ]
       },
       "minecraft:ambient_sound": {
-        "sound": "mob.enderdragon.growl",
+        "sound": "entity.dragon_whelp.ambient",
         "interval": 120,
         "range": 12.0,
         "pitch": 1.5
       },
       "minecraft:hurt_sound": {
-        "sound": "mob.enderdragon.hit",
-        "pitch": 1.5
+        "sound": "entity.dragon_whelp.hurt"
       },
       "minecraft:death_sound": {
-        "sound": "mob.enderdragon.death",
-        "pitch": 1.5
+        "sound": "entity.dragon_whelp.death"
       },
       "minecraft:loot": {
         "table": "loot_tables/entities/dragon_whelp.json"
