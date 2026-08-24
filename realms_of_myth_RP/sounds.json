@@ -325,6 +325,14 @@
     "category": "player",
     "sounds": [{ "name": "sounds/ability/natures_blessing_cast", "volume": 0.8 }]
   },
+  "music.realms_battle": {
+    "category": "music",
+    "sounds": [{ "name": "sounds/music/realms_battle", "volume": 0.9, "stream": true }]
+  },
+  "music.realms_theme": {
+    "category": "music",
+    "sounds": [{ "name": "sounds/music/realms_theme", "volume": 0.8, "stream": true }]
+  },
   "realms.music.battle_start": {
     "category": "music",
     "sounds": [{ "name": "sounds/music/battle_start", "volume": 0.9 }]

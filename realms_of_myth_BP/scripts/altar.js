@@ -147,6 +147,16 @@ function checkRitualCompletion(block, k) {
     const ritual = activeRituals.get(k);
     if (!ritual) return;
     const dim = block.dimension;
+    const altarLoc = block.location;
+    // Altar ambience: mystic drone for players near an active ritual altar
+    try {
+        for (const p of world.getPlayers()) {
+            const d = Math.hypot(p.location.x - (altarLoc.x + 0.5),
+                                 Math.abs(p.location.y - altarLoc.y),
+                                 p.location.z - (altarLoc.z + 0.5));
+            if (d < 16) p.playSound('block.ancient_altar.ambient', { volume: 0.7 });
+        }
+    } catch (e) { /* */ }
     let alive = 0;
     for (const id of ritual.spawned) {
         try {
@@ -253,7 +263,7 @@ export function doPrestige(player, cls) {
 
     player.dimension.spawnParticle('realms:class_select_burst', player.location);
     player.dimension.spawnParticle('realms:holy_light_beam', player.location);
-    player.playSound('realms.ui.class_select_open');
+    player.playSound('realms.ability.holy_light_cast');
     player.sendMessage({ rawtext: [{ text: `§d✦ You have ASCENDED! Level reset to 1, +${hpBonus} permanent max HP, and an eternal ${cls} aura.` }] });
 }
 

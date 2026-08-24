@@ -78,7 +78,9 @@ export function registerAbilities() {
         executeAbility(player, data.class, ability, data.race);
 
         player.sendMessage(`§a✨ §l${ability.name}§r §aactivated!`);
-        player.playSound('random.orb');
+        // NOTE: signature sound + particle are played per-ability inside the
+        // implementation helpers (custom realms.* SFX + realms:* VFX) — no
+        // generic global cue here anymore.
     });
 
     // ── Cooldown processing (every tick) + bloodlust expiry ───────
@@ -86,14 +88,41 @@ export function registerAbilities() {
     // We do NOT need the % 10 check on bloodlust — checking every tick is
     // cheap and avoids off-by-one drift if system.currentTick is a big number.
     system.runInterval(() => {
-        for (const [, cdMap] of cooldowns) {
+        for (const [pid, cdMap] of cooldowns) {
             for (const [abilityId, ticks] of cdMap) {
-                if (ticks > 0) cdMap.set(abilityId, ticks - 1);
+                if (ticks > 0) {
+                    const next = ticks - 1;
+                    cdMap.set(abilityId, next);
+                    // Cooldown-ready cue: fire once as each ability comes off cooldown
+                    if (next === 0) {
+                        try {
+                            const p = world.getEntity(pid);
+                            if (p && p.isValid()) {
+                                p.playSound('realms.ui.ability_ready');
+                            }
+                        } catch (e) { /* player offline */ }
+                    }
+                }
             }
         }
         const now = system.currentTick;
         for (const [playerId, endTick] of activeBloodlusts) {
-            if (now >= endTick) activeBloodlusts.delete(playerId);
+            if (now >= endTick) { activeBloodlusts.delete(playerId); continue; }
+            // Bloodlust polish: low-health heartbeat + blood motes while active
+            try {
+                const p = world.getEntity(playerId);
+                if (p && p.isValid()) {
+                    const hp = p.getComponent('minecraft:health');
+                    if (hp && hp.currentValue < hp.effectiveMax * 0.35 && now % 30 === 0) {
+                        p.playSound('beacon.deactivate', { pitch: 0.6 });
+                    }
+                    if (now % 10 === 0) {
+                        p.dimension.spawnParticle('realms:rage_blood_motes', {
+                            x: p.location.x, y: p.location.y + 1, z: p.location.z
+                        });
+                    }
+                }
+            } catch (e) { /* player offline / chunk unload */ }
         }
     }, 1);
 
@@ -117,7 +146,7 @@ export function registerAbilities() {
 
         let damageMultiplier = 1.0;
 
-        // (1) Dragonslayer Spear: 2x damage vs family=dragon
+        // (1) Dragonslayer Spear: 2x damage vs family=dragon + lightning crackle proc
         const family = victim.getComponent('minecraft:type_family');
         if (family && family.hasType('dragon')) {
             const eq = damager.getComponent('minecraft:equippable');
@@ -125,7 +154,15 @@ export function registerAbilities() {
                 const weapon = eq.getEquipment('Mainhand');
                 if (weapon && weapon.typeId === 'realms:dragonslayer_spear') {
                     damageMultiplier *= 2.0;
-                    system.run(() => damager.sendMessage('§6⚔ Dragonslayer! Double damage dealt.'));
+                    system.run(() => {
+                        damager.sendMessage('§6⚔ Dragonslayer! Double damage dealt.');
+                        try {
+                            victim.dimension.spawnParticle('realms:spear_lightning', {
+                                x: victim.location.x, y: victim.location.y + 1, z: victim.location.z
+                            });
+                            victim.dimension.playSound('ambient.weather.lightning', victim.location, { pitch: 1.4, volume: 0.6 });
+                        } catch (e) { /* entity gone */ }
+                    });
                 }
             }
         }
@@ -249,12 +286,12 @@ function executeAbility(player, classId, ability, raceId) {
         case 'multi_shot':       spawnArrowSpread(player, ability); break;
         case 'shadow_step':      applyBuffs(player, ability, [
             ['invisibility', 0], ['speed', 2]
-        ], 'mob.wither.spawn', 'minecraft:endrod'); break;
+        ], 'realms.ability.shadow_step_cast', 'realms:arcane_step'); break;
         case 'eagle_eye':        highlightNearby(player, ability); break;
         // Berserker
         case 'rage':             applyBuffs(player, ability, [
             ['strength', 2], ['speed', 1]
-        ], 'mob.ravager.roar', 'minecraft:angry_villager'); break;
+        ], 'realms.ability.rage_cast', 'realms:rage_blood_motes'); break;
         case 'ground_slam':      doGroundSlam(player, ability, damageMultiplier); break;
         case 'bloodlust':        activateBloodlust(player, ability); break;
         // Paladin
@@ -278,14 +315,24 @@ function applyBuffs(player, ability, effects, sound, particle) {
         player.runCommand(`effect @s ${effect} ${secs} ${level} true`);
     }
     if (sound) player.playSound(sound);
-    if (particle) player.runCommand(`particle ${particle} ~~~`);
+    if (particle) {
+        try { player.dimension.spawnParticle(particle, player.location); }
+        catch (e) { /* particle may not resolve in some dims */ }
+    }
 }
 
 function applyShield(player, ability, effect, level) {
     const secs = Math.round(ability.duration / 20);
     player.runCommand(`effect @s ${effect} ${secs} ${level} true`);
-    player.playSound('beacon.activate');
-    player.runCommand('particle minecraft:totem_of_undying ~~~');
+    const soundId = ability.id === 'ice_shield'
+        ? 'realms.ability.ice_shield_cast'
+        : 'realms.ability.divine_shield_cast';
+    player.playSound(soundId);
+    try {
+        player.dimension.spawnParticle('realms:divine_shield_aura', {
+            x: player.location.x, y: player.location.y + 1, z: player.location.z
+        });
+    } catch (e) { /* particle may not resolve */ }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -300,8 +347,12 @@ function spawnFireball(player, ability, multiplier) {
         y: head.y + dir.y * 1.5,
         z: head.z + dir.z * 1.5
     });
-    player.playSound('mob.blaze.shoot');
-    player.runCommand(`particle minecraft:flame ~~~`);
+    player.playSound('realms.ability.fireball_cast');
+    try {
+        player.dimension.spawnParticle('realms:fireball_trail', {
+            x: head.x + dir.x * 1.5, y: head.y + dir.y * 1.5, z: head.z + dir.z * 1.5
+        });
+    } catch (e) { /* particle may not resolve */ }
     if (multiplier > 1) {
         player.sendMessage('§d✦ Arcane Amplification: +30% ability damage');
     }
@@ -309,14 +360,18 @@ function spawnFireball(player, ability, multiplier) {
 
 function teleportForward(player, ability) {
     const dir = player.getViewDirection();
-    const loc = player.location;
-    player.teleport({
-        x: loc.x + dir.x * ability.range,
-        y: loc.y + dir.y * ability.range,
-        z: loc.z + dir.z * ability.range
-    });
-    player.playSound('mob.endermen.portal');
-    player.runCommand('particle minecraft:portal_particle ~~~');
+    const from = { ...player.location };
+    const to = {
+        x: from.x + dir.x * ability.range,
+        y: from.y + dir.y * ability.range,
+        z: from.z + dir.z * ability.range
+    };
+    // Departure burst
+    try { player.dimension.spawnParticle('realms:arcane_step', from); } catch (e) { /* */ }
+    player.teleport(to);
+    // Arrival burst
+    try { player.dimension.spawnParticle('realms:arcane_step', to); } catch (e) { /* */ }
+    player.playSound('realms.ability.arcane_teleport_cast');
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -335,14 +390,24 @@ function spawnArrowSpread(player) {
             z: head.z + dir.z * 1.5
         });
     }
-    player.playSound('random.bow');
+    player.playSound('realms.weapon.bow_release');
+    try {
+        player.dimension.spawnParticle('realms:arcane_step', {
+            x: head.x + dir.x * 1.5, y: head.y + dir.y * 1.5, z: head.z + dir.z * 1.5
+        });
+    } catch (e) { /* particle may not resolve */ }
 }
 
 function highlightNearby(player, ability) {
     const secs = Math.round(ability.duration / 20);
     player.runCommand(`effect @s night_vision ${secs} 0 true`);
     player.runCommand(`effect @e[r=${ability.radius},family=monster] glowing ${secs} 0 true`);
-    player.playSound('mob.witch.ambient');
+    player.playSound('realms.ability.eagle_eye_cast');
+    try {
+        player.dimension.spawnParticle('realms:arcane_step', {
+            x: player.location.x, y: player.location.y + 2, z: player.location.z
+        });
+    } catch (e) { /* */ }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -354,13 +419,20 @@ function doGroundSlam(player, ability, multiplier) {
     const dmgLevel = Math.round((ability.damage * multiplier) / 3);
     dim.runCommand(`effect @e[family=monster,r=${ability.radius}] levitation 5 0 true`);
     dim.runCommand(`effect @e[family=monster,r=${ability.radius}] instant_damage 1 ${dmgLevel} true`);
-    dim.runCommand(`execute at @p run particle minecraft:large_explosion ~ ~ ~`);
-    player.playSound('mob.irongolem.hit');
+    try {
+        dim.spawnParticle('realms:ground_slam_dust', player.location);
+    } catch (e) { /* particle may not resolve */ }
+    player.playSound('realms.ability.ground_slam_cast');
 }
 
 function activateBloodlust(player, ability) {
     player.runCommand('effect @s instant_health 1 1 true');
-    player.playSound('mob.evocation_illager.prepare_summon');
+    player.playSound('realms.ability.bloodlust_cast');
+    try {
+        player.dimension.spawnParticle('realms:rage_blood_motes', {
+            x: player.location.x, y: player.location.y + 1, z: player.location.z
+        });
+    } catch (e) { /* */ }
     const endTick = system.currentTick + ability.duration;
     activeBloodlusts.set(player.id, endTick);
     player.sendMessage('§c🩸 Bloodlust active! Heal 30% of damage dealt for 6s.');
@@ -374,16 +446,26 @@ function healAOE(player, ability) {
     const level = Math.round(ability.healAmount / 4);
     player.runCommand(`effect @s instant_health 1 ${level} true`);
     player.dimension.runCommand(`effect @e[family=player,r=${ability.radius}] instant_health 1 ${level} true`);
-    player.dimension.runCommand(`execute at @p run particle minecraft:totem_of_undying ~ ~ ~`);
-    player.playSound('random.orb');
+    try {
+        player.dimension.spawnParticle('realms:holy_light_beam', {
+            x: player.location.x, y: player.location.y + 1, z: player.location.z
+        });
+    } catch (e) { /* particle may not resolve */ }
+    player.playSound('realms.ability.holy_light_cast');
 }
 
 function doSmite(player, ability, multiplier) {
     const dim = player.dimension;
     const dmgLevel = Math.round((ability.damage * multiplier) / 3);
     dim.runCommand(`effect @e[family=monster,c=1,r=8] instant_damage 1 ${dmgLevel} true`);
-    player.playSound('ambient.weather.thunder');
-    dim.runCommand(`execute at @p run particle minecraft:lightning_bolt ~ ~ ~`);
+    player.playSound('realms.ability.smite_cast');
+    try {
+        const targets = dim.getEntities({ family: 'monster', closest: 1, maxDistance: 8 });
+        const loc = (targets && targets[0]) ? targets[0].location : player.location;
+        dim.spawnParticle('realms:spear_lightning', {
+            x: loc.x, y: loc.y + 2, z: loc.z
+        });
+    } catch (e) { /* fallback: skip particle */ }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -416,25 +498,36 @@ function activateWolfForm(player, ability) {
         try { if (wolf.isValid()) wolf.remove(); } catch (e) { /* already gone */ }
     }, ability.duration);
 
-    player.runCommand(`particle minecraft:heart_particle ~~~`);
-    player.runCommand(`particle minecraft:spore_blossom_ambient ~~~`);
-    player.playSound('mob.wolf.howl');
+    try {
+        player.dimension.spawnParticle('realms:nature_blessing_leaves', {
+            x: player.location.x, y: player.location.y + 1.5, z: player.location.z
+        });
+    } catch (e) { /* */ }
+    player.playSound('realms.ability.wolf_form_cast');
     player.sendMessage('§2🐺 Wolf Form! The pack is with you.');
 }
 
 function rootEnemy(player, ability) {
     const secs = Math.round(ability.duration / 20);
     player.dimension.runCommand(`effect @e[family=monster,c=1,r=10] slowness ${secs} 10 true`);
-    player.dimension.runCommand(`execute at @e[family=monster,c=1,r=10] run particle minecraft:spore_blossom_ambient ~ ~ ~`);
-    player.playSound('dig.grass');
+    try {
+        const targets = player.dimension.getEntities({ family: 'monster', closest: 1, maxDistance: 10 });
+        const loc = (targets && targets[0]) ? targets[0].location : player.location;
+        player.dimension.spawnParticle('realms:entangle_roots', loc);
+    } catch (e) { /* skip particle */ }
+    player.playSound('realms.ability.entangling_roots_cast');
 }
 
 function applyHoT(player, ability) {
     const secs = Math.round(ability.duration / 20);
     const level = Math.round(ability.healPerTick / 2);
     player.runCommand(`effect @s regeneration ${secs} ${level} true`);
-    player.dimension.runCommand(`execute at @p run particle minecraft:crop_growth_emitter ~ ~ ~`);
-    player.playSound('random.orb');
+    try {
+        player.dimension.spawnParticle('realms:nature_blessing_leaves', {
+            x: player.location.x, y: player.location.y + 1, z: player.location.z
+        });
+    } catch (e) { /* */ }
+    player.playSound('realms.ability.natures_blessing_cast');
 }
 
 // ═══════════════════════════════════════════════════════════════════

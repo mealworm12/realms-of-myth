@@ -11,7 +11,7 @@ import { CLASSES, RACES } from './classSystem.js';
 import { restorePlayerState, resetPlayerData, loadPlayerData, applyClassMasterBonuses } from './playerData.js';
 import { showClassSelectionForm } from './classSelection.js';
 import { registerAbilities } from './abilities.js';
-import { registerDragonAI } from './dragonBoss.js';
+import { registerDragonAI, registerFogMaintenance, registerLairAmbience } from './dragonBoss.js';
 import { registerQuests, startQuestChain, questStatus } from './quests.js';
 import { registerMythicWeapons } from './mythicWeapons.js';
 import { registerTaming, tryBreathAttack } from './dragonRiding.js';
@@ -25,6 +25,8 @@ console.log('[Realms of Myth] Initializing...');
 world.afterEvents.worldInitialize.subscribe(() => {
     console.log('[Realms of Myth] World initialized');
     registerDragonAI();
+    registerFogMaintenance();
+    registerLairAmbience();
     registerQuests();
     registerMythicWeapons();
     registerTaming();

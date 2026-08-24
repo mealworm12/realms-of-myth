@@ -97,7 +97,7 @@ function procVoidReaver(player, victim) {
         player.dimension.spawnParticle('realms:arcane_step', behind);
     } catch (e) { /* */ }
     player.runCommand(`effect @s speed 5 1 true`);
-    player.playSound('mob.endermen.portal');
+    try { player.playSound('realms.ability.arcane_teleport_cast'); } catch (e) { /* */ }
     player.sendMessage('§5⟳ Void Reaver: you slip through shadow!');
 }
 

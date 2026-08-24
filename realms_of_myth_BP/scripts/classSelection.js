@@ -6,10 +6,20 @@
  * the form opens with that class pre-selected on the second step.
  */
 
+import { world } from '@minecraft/server';
 import { ActionFormData } from '@minecraft/server-ui';
 import { RACES, CLASSES } from './classSystem.js';
 import { savePlayerData } from './playerData.js';
 import { startQuestChain } from './quests.js';
+
+/** Per-class signature sound played on class confirmation. */
+const CLASS_CONFIRM_SOUNDS = {
+    mage:      'realms.weapon.staff_cast',
+    ranger:    'realms.weapon.bow_release',
+    berserker: 'realms.ability.rage_cast',
+    paladin:   'realms.ability.holy_light_cast',
+    druid:     'realms.ability.natures_blessing_cast'
+};
 
 /**
  * Show the class selection form to a player.
@@ -20,6 +30,8 @@ import { startQuestChain } from './quests.js';
  *        and go straight to confirm with this class (used by class tokens)
  */
 export function showClassSelectionForm(player, preselectedClassId = null) {
+    // Custom UI sound when the selection flow opens
+    try { player.playSound('realms.ui.class_select_open'); } catch (e) { /* */ }
     // If race already chosen + class pre-selected (from a class token),
     // go directly to the confirm step.
     const racePending = player.getDynamicProperty('rom:race_pending');
@@ -161,8 +173,23 @@ export function finalizeClassSelection(player, raceId, classId) {
         ]
     });
 
-    // Play a sound
-    player.playSound('random.levelup');
+    // Play a sound (custom class-select burst SFX; themed signature follows below)
+    player.playSound('realms.ui.class_select_open');
+
+    // Custom FX: class-select burst + class-themed signature sound.
+    // Prestige ritual aura: re-choosing a class after having one counts as
+    // the prestige moment — divine shield aura + holy light beam.
+    try {
+        player.dimension.spawnParticle('realms:class_select_burst', {
+            x: player.location.x, y: player.location.y + 1, z: player.location.z
+        });
+        const themedSound = CLASS_CONFIRM_SOUNDS[classId] || 'realms.ui.ability_ready';
+        player.playSound(themedSound);
+        // Prestige ritual aura (player had a previous destiny sealed)
+        player.dimension.spawnParticle('realms:divine_shield_aura', {
+            x: player.location.x, y: player.location.y + 1, z: player.location.z
+        });
+    } catch (e) { /* particle may not resolve */ }
 
     console.log(`[Realms of Myth] ${player.name} chose ${race.name} ${cls.name}`);
 }
