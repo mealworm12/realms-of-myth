@@ -14,7 +14,28 @@
       },
       "render_controllers": [
         "controller.render.elf_warrior"
-      ]
+      ],
+      "animations": {
+        "idle": "animation.elf_warrior.idle",
+        "walk": "animation.elf_warrior.walk",
+        "attack": "animation.elf_warrior.attack",
+        "hurt": "animation.elf_warrior.hurt",
+        "death": "animation.elf_warrior.death",
+        "move_ctrl": "controller.animation.elf_warrior.movement",
+        "death_ctrl": "controller.animation.elf_warrior.death",
+        "head_track": "animation.mob.head_track"
+      },
+      "scripts": {
+        "animate": [
+          "move_ctrl",
+          "death_ctrl",
+          "head_track"
+        ]
+      },
+      "spawn_egg": {
+        "base_color": "0x8FBC8F",
+        "overlay_color": "0x2E5E2E"
+      }
     }
   }
 }

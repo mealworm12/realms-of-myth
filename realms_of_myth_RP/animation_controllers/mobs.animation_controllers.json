@@ -1,0 +1,422 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.elf_warrior.movement": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "animations": [
+            "idle"
+          ],
+          "transitions": [
+            {
+              "walk": "query.modified_move_speed > 0.1"
+            },
+            {
+              "attack": "query.attack_time > 0"
+            },
+            {
+              "hurt": "query.hurt_time > 0"
+            }
+          ]
+        },
+        "walk": {
+          "animations": [
+            "walk"
+          ],
+          "transitions": [
+            {
+              "attack": "query.attack_time > 0"
+            },
+            {
+              "hurt": "query.hurt_time > 0"
+            },
+            {
+              "default": "query.modified_move_speed <= 0.1"
+            }
+          ],
+          "blend_transition": 0.2
+        },
+        "attack": {
+          "animations": [
+            "attack"
+          ],
+          "transitions": [
+            {
+              "hurt": "query.hurt_time > 0"
+            },
+            {
+              "default": "query.all_animations_finished"
+            }
+          ],
+          "blend_transition": 0.15
+        },
+        "hurt": {
+          "animations": [
+            "hurt"
+          ],
+          "transitions": [
+            {
+              "default": "query.all_animations_finished"
+            }
+          ],
+          "blend_transition": 0.1
+        }
+      }
+    },
+    "controller.animation.elf_warrior.death": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "transitions": [
+            {
+              "dying": "query.death_ticks > 0"
+            }
+          ]
+        },
+        "dying": {
+          "animations": [
+            "death"
+          ],
+          "transitions": []
+        }
+      }
+    },
+    "controller.animation.troll_brute.movement": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "animations": [
+            "idle"
+          ],
+          "transitions": [
+            {
+              "walk": "query.modified_move_speed > 0.1"
+            },
+            {
+              "attack": "query.attack_time > 0"
+            },
+            {
+              "hurt": "query.hurt_time > 0"
+            }
+          ]
+        },
+        "walk": {
+          "animations": [
+            "walk"
+          ],
+          "transitions": [
+            {
+              "attack": "query.attack_time > 0"
+            },
+            {
+              "hurt": "query.hurt_time > 0"
+            },
+            {
+              "default": "query.modified_move_speed <= 0.1"
+            }
+          ],
+          "blend_transition": 0.2
+        },
+        "attack": {
+          "animations": [
+            "attack"
+          ],
+          "transitions": [
+            {
+              "hurt": "query.hurt_time > 0"
+            },
+            {
+              "default": "query.all_animations_finished"
+            }
+          ],
+          "blend_transition": 0.15
+        },
+        "hurt": {
+          "animations": [
+            "hurt"
+          ],
+          "transitions": [
+            {
+              "default": "query.all_animations_finished"
+            }
+          ],
+          "blend_transition": 0.1
+        }
+      }
+    },
+    "controller.animation.troll_brute.death": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "transitions": [
+            {
+              "dying": "query.death_ticks > 0"
+            }
+          ]
+        },
+        "dying": {
+          "animations": [
+            "death"
+          ],
+          "transitions": []
+        }
+      }
+    },
+    "controller.animation.giant_colossus.movement": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "animations": [
+            "idle"
+          ],
+          "transitions": [
+            {
+              "walk": "query.modified_move_speed > 0.1"
+            },
+            {
+              "attack": "query.attack_time > 0"
+            },
+            {
+              "hurt": "query.hurt_time > 0"
+            }
+          ]
+        },
+        "walk": {
+          "animations": [
+            "walk"
+          ],
+          "transitions": [
+            {
+              "attack": "query.attack_time > 0"
+            },
+            {
+              "hurt": "query.hurt_time > 0"
+            },
+            {
+              "default": "query.modified_move_speed <= 0.1"
+            }
+          ],
+          "blend_transition": 0.2
+        },
+        "attack": {
+          "animations": [
+            "attack"
+          ],
+          "transitions": [
+            {
+              "hurt": "query.hurt_time > 0"
+            },
+            {
+              "default": "query.all_animations_finished"
+            }
+          ],
+          "blend_transition": 0.15
+        },
+        "hurt": {
+          "animations": [
+            "hurt"
+          ],
+          "transitions": [
+            {
+              "default": "query.all_animations_finished"
+            }
+          ],
+          "blend_transition": 0.1
+        }
+      }
+    },
+    "controller.animation.giant_colossus.death": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "transitions": [
+            {
+              "dying": "query.death_ticks > 0"
+            }
+          ]
+        },
+        "dying": {
+          "animations": [
+            "death"
+          ],
+          "transitions": []
+        }
+      }
+    },
+    "controller.animation.dragon_whelp.movement": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "animations": [
+            "idle"
+          ],
+          "transitions": [
+            {
+              "fly": "query.is_in_water_or_rain || !query.is_on_ground"
+            },
+            {
+              "walk": "query.modified_move_speed > 0.1"
+            },
+            {
+              "attack": "query.attack_time > 0"
+            },
+            {
+              "hurt": "query.hurt_time > 0"
+            }
+          ]
+        },
+        "fly": {
+          "animations": [
+            "fly"
+          ],
+          "blend_transition": 0.25,
+          "transitions": [
+            {
+              "attack": "query.attack_time > 0"
+            },
+            {
+              "walk": "query.is_on_ground && query.modified_move_speed > 0.1"
+            },
+            {
+              "default": "query.is_on_ground"
+            }
+          ]
+        },
+        "walk": {
+          "animations": [
+            "walk"
+          ],
+          "blend_transition": 0.2,
+          "transitions": [
+            {
+              "fly": "!query.is_on_ground"
+            },
+            {
+              "attack": "query.attack_time > 0"
+            },
+            {
+              "hurt": "query.hurt_time > 0"
+            },
+            {
+              "default": "query.modified_move_speed <= 0.1"
+            }
+          ]
+        },
+        "attack": {
+          "animations": [
+            "attack"
+          ],
+          "blend_transition": 0.15,
+          "transitions": [
+            {
+              "hurt": "query.hurt_time > 0"
+            },
+            {
+              "fly": "!query.is_on_ground"
+            },
+            {
+              "walk": "query.modified_move_speed > 0.1 && query.all_animations_finished"
+            },
+            {
+              "default": "query.all_animations_finished"
+            }
+          ]
+        },
+        "hurt": {
+          "animations": [
+            "hurt"
+          ],
+          "blend_transition": 0.1,
+          "transitions": [
+            {
+              "default": "query.all_animations_finished"
+            }
+          ]
+        }
+      }
+    },
+    "controller.animation.dragon_fire.phase": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "animations": [],
+          "transitions": [
+            {
+              "roaring": "variable.phase_roar > 0"
+            },
+            {
+              "tail_swipe": "variable.phase_tail > 0"
+            }
+          ]
+        },
+        "roaring": {
+          "animations": [
+            "roar"
+          ],
+          "blend_transition": 0.2,
+          "transitions": [
+            {
+              "tail_swipe": "variable.phase_tail > 0"
+            },
+            {
+              "default": "query.all_animations_finished"
+            }
+          ]
+        },
+        "tail_swipe": {
+          "animations": [
+            "tail_swipe"
+          ],
+          "blend_transition": 0.2,
+          "transitions": [
+            {
+              "default": "query.all_animations_finished"
+            }
+          ]
+        }
+      }
+    },
+    "controller.animation.dragon_frost.phase": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "animations": [],
+          "transitions": [
+            {
+              "roaring": "variable.phase_roar > 0"
+            },
+            {
+              "tail_swipe": "variable.phase_tail > 0"
+            }
+          ]
+        },
+        "roaring": {
+          "animations": [
+            "roar"
+          ],
+          "blend_transition": 0.2,
+          "transitions": [
+            {
+              "tail_swipe": "variable.phase_tail > 0"
+            },
+            {
+              "default": "query.all_animations_finished"
+            }
+          ]
+        },
+        "tail_swipe": {
+          "animations": [
+            "tail_swipe"
+          ],
+          "blend_transition": 0.2,
+          "transitions": [
+            {
+              "default": "query.all_animations_finished"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
