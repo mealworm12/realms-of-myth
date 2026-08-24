@@ -1,0 +1,77 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "realms:rage_blood_motes",
+      "basic_render_parameters": {
+        "material": "particles_alpha",
+        "texture": "textures/particles/blood_drip.png"
+      }
+    },
+    "components": {
+      "minecraft:emitter_rate_steady": {
+        "spawn_rate": 12,
+        "max_particles": 40
+      },
+      "minecraft:emitter_lifetime_looping": {
+        "active_time": 3.0
+      },
+      "minecraft:emitter_shape_sphere": {
+        "offset": [
+          0,
+          0.2,
+          0
+        ],
+        "radius": 0.5,
+        "direction": [
+          [
+            0,
+            -0.4,
+            0
+          ]
+        ]
+      },
+      "minecraft:particle_initial_speed": 0.2,
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "math.random(0.5,1.2)"
+      },
+      "minecraft:particle_motion_dynamic": {
+        "linear_acceleration": [
+          0,
+          -6.0,
+          0
+        ],
+        "linear_drag_coefficient": 0.2
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          0.13,
+          0.13
+        ],
+        "facing_camera_mode": "lookat_xyz",
+        "uv": {
+          "texture_width": 1,
+          "texture_height": 1,
+          "uv": [
+            0,
+            0
+          ],
+          "uv_size": [
+            1,
+            1
+          ]
+        }
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": [
+          "0.67",
+          "0.06",
+          "0.09",
+          "1.0-Variable.particle_age/Variable.particle_lifetime"
+        ]
+      },
+      "minecraft:particle_appearance_lighting": {}
+    },
+    "events": "entity_mother"
+  }
+}

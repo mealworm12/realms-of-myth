@@ -22,6 +22,10 @@
         "roar": "animation.dragon_frost.roar",
         "phase_ctrl": "controller.animation.dragon_frost.phase"
       },
+      "particle_effects": {
+        "breath_frost": "realms:dragon_breath_frost",
+        "enrage": "realms:phase_enrage"
+      },
       "scripts": {
         "animate": [
           "wing_flap",

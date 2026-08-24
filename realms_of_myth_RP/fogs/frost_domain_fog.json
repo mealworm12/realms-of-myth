@@ -1,0 +1,19 @@
+{
+  "format_version": "1.16.100",
+  "minecraft:fog": {
+    "description": {
+      "identifier": "realms:frost_domain_fog"
+    },
+    "components": {
+      "minecraft:fog_color": {
+        "color": [0.55, 0.72, 0.88]
+      },
+      "minecraft:fog_density": {
+        "density": 0.028
+      },
+      "minecraft:volumetric_fog": {
+        "max_distance": 128
+      }
+    }
+  }
+}

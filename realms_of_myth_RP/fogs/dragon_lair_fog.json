@@ -1,0 +1,19 @@
+{
+  "format_version": "1.16.100",
+  "minecraft:fog": {
+    "description": {
+      "identifier": "realms:dragon_lair_fog"
+    },
+    "components": {
+      "minecraft:fog_color": {
+        "color": [0.32, 0.05, 0.04]
+      },
+      "minecraft:fog_density": {
+        "density": 0.06
+      },
+      "minecraft:volumetric_fog": {
+        "max_distance": 48
+      }
+    }
+  }
+}

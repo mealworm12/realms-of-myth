@@ -22,6 +22,10 @@
         "roar": "animation.dragon_fire.roar",
         "phase_ctrl": "controller.animation.dragon_fire.phase"
       },
+      "particle_effects": {
+        "breath_fire": "realms:dragon_breath_fire",
+        "enrage": "realms:phase_enrage"
+      },
       "scripts": {
         "animate": [
           "wing_flap",
