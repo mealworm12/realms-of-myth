@@ -46,7 +46,8 @@ export function registerAbilities() {
             return;
         }
 
-        event.cancel = true;
+        // ItemUseAfterEvent has no cancel flag (only the before-event does).
+        // Class tokens are not consumable, so there is nothing to suppress.
 
         const abilities = getClassAbilities(data.class);
         if (!abilities || abilityIndex >= abilities.length) return;
@@ -137,7 +138,15 @@ export function registerAbilities() {
     // Use beforeEvents so we can scale event.damage BEFORE the hit lands.
     // This avoids the "victim died from the first hit so the bonus is wasted"
     // bug that the old afterEvents version had.
-    world.beforeEvents.entityHurt.subscribe((event) => {
+    //
+    // entityHurt is a *before* event only on API 2.6+; guard the lookup so a
+    // pack pinned to an older module version still loads (bonuses are simply
+    // skipped with a console warning instead of taking the whole script down).
+    const beforeHurt = world.beforeEvents.entityHurt;
+    if (!beforeHurt) {
+        console.warn('[Realms of Myth] beforeEvents.entityHurt unavailable on this API version; ' +
+                     'weapon/race damage multipliers are disabled.');
+    } else beforeHurt.subscribe((event) => {
         const damager = event.damageSource?.damagingEntity;
         const victim = event.hurtEntity;
         if (!damager) return;
@@ -249,11 +258,13 @@ export function registerAbilities() {
             }
         }
 
-        // (2) Human XP bonus: 1 bonus XP level per kill
+        // (2) Human XP bonus: +1 XP point per kill (the README's "+10%").
+        // The old `xp 1L` granted a full level per kill — roughly 10x the
+        // documented bonus.
         if (damager.getDynamicProperty('rom:race') === 'human') {
             if (damager.getDynamicProperty('rom:human_skill_points')) {
                 try {
-                    damager.runCommand('xp 1L @s');
+                    damager.runCommand('xp 1 @s');
                 } catch (e) { /* commands may be disabled */ }
                 damager.sendMessage('§e🌟 Human Adaptability: bonus XP earned!');
             }
@@ -344,11 +355,16 @@ function applyShield(player, ability, effect, level) {
 function spawnFireball(player, ability, multiplier) {
     const head = player.getHeadLocation();
     const dir = player.getViewDirection();
-    player.dimension.spawnEntity('minecraft:fireball', {
+    const fireball = player.dimension.spawnEntity('minecraft:fireball', {
         x: head.x + dir.x * 1.5,
         y: head.y + dir.y * 1.5,
         z: head.z + dir.z * 1.5
     });
+    // Spawned projectiles start at rest and drop at the caster's feet without
+    // an impulse along the view vector.
+    try {
+        fireball.applyImpulse({ x: dir.x * 1.2, y: dir.y * 1.2 + 0.1, z: dir.z * 1.2 });
+    } catch (e) { /* projectile may not accept impulses */ }
     player.playSound('realms.ability.fireball_cast');
     try {
         player.dimension.spawnParticle('realms:fireball_trail', {
@@ -386,11 +402,15 @@ function spawnArrowSpread(player) {
     const dim = player.dimension;
     const offsets = [0, -0.12, 0.12];
     for (const oy of offsets) {
-        dim.spawnEntity('minecraft:arrow', {
+        const arrow = dim.spawnEntity('minecraft:arrow', {
             x: head.x + dir.x * 1.5,
             y: head.y + dir.y * 1.5 + oy,
             z: head.z + dir.z * 1.5
         });
+        // Give the arrow its flight vector; otherwise it falls straight down.
+        try {
+            arrow.applyImpulse({ x: dir.x * 1.8, y: dir.y * 1.8 + 0.1, z: dir.z * 1.8 });
+        } catch (e) { /* projectile may not accept impulses */ }
     }
     player.playSound('realms.weapon.bow_release');
     try {
@@ -417,12 +437,13 @@ function highlightNearby(player, ability) {
 // ═══════════════════════════════════════════════════════════════════
 
 function doGroundSlam(player, ability, multiplier) {
-    const dim = player.dimension;
-    const dmgLevel = Math.round((ability.damage * multiplier) / 3);
-    dim.runCommand(`effect @e[family=monster,r=${ability.radius}] levitation 5 0 true`);
-    dim.runCommand(`effect @e[family=monster,r=${ability.radius}] instant_damage 1 ${dmgLevel} true`);
+    const dmgLevel = Math.max(1, Math.round((ability.damage * multiplier) / 6));
+    // Player-context commands: a Dimension command resolves @e/@p from the
+    // world origin (0,0,0), so radius selectors would hit the wrong place.
+    player.runCommand(`effect @e[family=monster,r=${ability.radius}] levitation 5 0 true`);
+    player.runCommand(`effect @e[family=monster,r=${ability.radius}] instant_damage 1 ${dmgLevel} true`);
     try {
-        dim.spawnParticle('realms:ground_slam_dust', player.location);
+        player.dimension.spawnParticle('realms:ground_slam_dust', player.location);
     } catch (e) { /* particle may not resolve */ }
     player.playSound('realms.ability.ground_slam_cast');
 }
@@ -445,9 +466,9 @@ function activateBloodlust(player, ability) {
 // ═══════════════════════════════════════════════════════════════════
 
 function healAOE(player, ability) {
-    const level = Math.round(ability.healAmount / 4);
+    const level = Math.max(1, Math.round(ability.healAmount / 4));
     player.runCommand(`effect @s instant_health 1 ${level} true`);
-    player.dimension.runCommand(`effect @e[family=player,r=${ability.radius}] instant_health 1 ${level} true`);
+    player.runCommand(`effect @e[family=player,r=${ability.radius}] instant_health 1 ${level} true`);
     try {
         player.dimension.spawnParticle('realms:holy_light_beam', {
             x: player.location.x, y: player.location.y + 1, z: player.location.z
@@ -458,8 +479,10 @@ function healAOE(player, ability) {
 
 function doSmite(player, ability, multiplier) {
     const dim = player.dimension;
-    const dmgLevel = Math.round((ability.damage * multiplier) / 3);
-    dim.runCommand(`effect @e[family=monster,c=1,r=8] instant_damage 1 ${dmgLevel} true`);
+    const dmgLevel = Math.max(1, Math.round((ability.damage * multiplier) / 6));
+    // Player-context selector so the nearest monster is measured from the
+    // caster, not from the world origin.
+    player.runCommand(`effect @e[family=monster,c=1,r=8] instant_damage 1 ${dmgLevel} true`);
     player.playSound('realms.ability.smite_cast');
     try {
         const targets = dim.getEntities({ family: 'monster', closest: 1, maxDistance: 8 });
@@ -511,7 +534,7 @@ function activateWolfForm(player, ability) {
 
 function rootEnemy(player, ability) {
     const secs = Math.round(ability.duration / 20);
-    player.dimension.runCommand(`effect @e[family=monster,c=1,r=10] slowness ${secs} 10 true`);
+    player.runCommand(`effect @e[family=monster,c=1,r=10] slowness ${secs} 10 true`);
     try {
         const targets = player.dimension.getEntities({ family: 'monster', closest: 1, maxDistance: 10 });
         const loc = (targets && targets[0]) ? targets[0].location : player.location;

@@ -193,7 +193,7 @@ function processDragon(dragon, dim) {
         case 'enraged': executeEnragedPhase(dragon, dim, dragonId); break;
     }
 
-    managedDragons.set(dragonId, { phase, hp: hpPercent });
+    managedDragons.set(dragonId, { ...(managedDragons.get(dragonId) || {}), phase, hp: hpPercent });
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -296,7 +296,10 @@ function executeGroundPhase(dragon, dim) {
             if (d < 12) applyTimedFog(p, fogId, 'rom_dragon_domain', 200);
         }
 
-        dim.runCommand(`effect @p[r=8] instant_damage 1 ${Math.round(dmg / 3)} true`);
+        // Dragon-context command: @p is resolved from the dragon, not from the
+        // dimension origin (which would target whoever is nearest 0,0,0).
+        try { dragon.runCommand(`effect @p[r=8] instant_damage 1 ${Math.max(1, Math.round(dmg / 6))} true`); }
+        catch (e) { /* target selector found no player */ }
     }
 }
 
@@ -324,7 +327,7 @@ function executeAerialPhase(dragon, dim) {
                 if (d < 16) applyTimedFog(p, 'realms:frost_domain_fog', 'rom_dragon_domain', 160);
             }
         }
-        dim.runCommand(`effect @p[r=12] instant_damage 1 2 true`);
+        try { dragon.runCommand('effect @p[r=12] instant_damage 1 2 true'); } catch (e) { /* no player in range */ }
     } else if (roll < 0.06) {
         // Dive bomb — teleport above nearest player, slam down with AoE
         const players = world.getPlayers();
@@ -336,7 +339,11 @@ function executeAerialPhase(dragon, dim) {
 
             const tLoc = nearest.location;
             dragon.teleport({ x: tLoc.x, y: tLoc.y + 15, z: tLoc.z });
-            dim.runCommand(`effect @p[r=6] instant_damage 1 4 true`);
+            // Positioned command: the dive strike lands at the target's feet,
+            // not at the dragon's new altitude and not at world origin.
+            try {
+                dim.runCommand(`execute positioned ${tLoc.x.toFixed(1)} ${tLoc.y.toFixed(1)} ${tLoc.z.toFixed(1)} run effect @p[r=6] instant_damage 1 4 true`);
+            } catch (e) { /* no player in range */ }
             try {
                 dim.spawnParticle('realms:ground_slam_dust', { x: tLoc.x, y: tLoc.y + 1, z: tLoc.z });
                 dim.playSound('entity.dragon_fire.roar', { x: tLoc.x, y: tLoc.y, z: tLoc.z });
@@ -354,7 +361,8 @@ function executeEnragedPhase(dragon, dim, dragonId) {
 
     if (roll < 0.05) {
         // Cataclysm AoE — large radius damage
-        dim.runCommand(`effect @p[r=20] instant_damage 1 3 true`);
+        // Cataclysm AoE — large radius damage centred on the dragon
+        try { dragon.runCommand('effect @p[r=20] instant_damage 1 3 true'); } catch (e) { /* no player in range */ }
         try {
             dim.spawnParticle('realms:phase_enrage', {
                 x: dragon.location.x, y: dragon.location.y + 2, z: dragon.location.z
@@ -407,7 +415,7 @@ function spawnWhelps(dragon, dim) {
         } catch (e) { /* */ }
         dragonWhelps.get(dragonId).push(whelp.id);
     }
-    dim.runCommand('playsound mob.enderdragon.growl @a ~~~ 1 0.8');
+    try { dim.playSound('mob.enderdragon.growl', loc, { volume: 1.0, pitch: 0.8 }); } catch (e) { /* */ }
 }
 
 function maintainWhelps(dragon, dim, dragonId) {

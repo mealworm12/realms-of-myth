@@ -73,7 +73,7 @@ export const CLASSES = {
             {
                 id: 'ice_shield',
                 name: 'Ice Shield',
-                description: 'Reduce damage by 50% for 5 seconds',
+                description: 'Reduce damage by 60% for 5 seconds',
                 cooldown: 600,
                 duration: 100
             },
@@ -123,7 +123,7 @@ export const CLASSES = {
             {
                 id: 'rage',
                 name: 'Rage',
-                description: '+40% damage, +20% speed for 8s',
+                description: '+6 attack damage, +20% speed for 8s',
                 cooldown: 600,
                 duration: 160
             },
@@ -153,9 +153,9 @@ export const CLASSES = {
             {
                 id: 'holy_light',
                 name: 'Holy Light',
-                description: 'Heal self + nearby allies for 6 HP',
+                description: 'Heal self + nearby allies for 8 HP',
                 cooldown: 300,
-                healAmount: 6,
+                healAmount: 8,
                 radius: 8
             },
             {
@@ -189,15 +189,14 @@ export const CLASSES = {
             {
                 id: 'entangling_roots',
                 name: 'Entangling Roots',
-                description: 'Root target for 4s, 3 DPS',
+                description: 'Root target for 4s',
                 cooldown: 360,
-                duration: 80,
-                dps: 3
+                duration: 80
             },
             {
                 id: 'natures_blessing',
                 name: "Nature's Blessing",
-                description: 'Heal 1 HP/s for 15s',
+                description: 'Regeneration for 15s',
                 cooldown: 900,
                 duration: 300,
                 healPerTick: 1

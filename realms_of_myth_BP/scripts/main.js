@@ -22,46 +22,59 @@ import { registerScaling } from './difficultyScaling.js';
 console.log('[Realms of Myth] Initializing...');
 
 // ── World Initialization ────────────────────────────────────────────
-world.afterEvents.worldInitialize.subscribe(() => {
-    console.log('[Realms of Myth] World initialized');
-    registerDragonAI();
-    registerFogMaintenance();
-    registerLairAmbience();
-    registerQuests();
-    registerMythicWeapons();
-    registerTaming();
-    registerScaling();
+// @minecraft/server 2.x renamed WorldInitializeAfterEvent to
+// WorldLoadAfterEvent (the old name is gone, so subscribing to it throws at
+// module-eval time and disables every script in the pack). Prefer the 2.x
+// event and keep a 1.x fallback so Education builds still boot.
+const worldReadyEvent = world.afterEvents.worldLoad ?? world.afterEvents.worldInitialize;
 
-    // Prestige aura renderer (every second)
-    system.runInterval(() => {
-        try { tickPrestigeAuras(); } catch (e) { /* */ }
-    }, 20);
-});
+if (!worldReadyEvent) {
+    console.warn('[Realms of Myth] No world-load event on this API version; scripts are inactive.');
+} else {
+    worldReadyEvent.subscribe(() => {
+        console.log('[Realms of Myth] World loaded');
+        registerDragonAI();
+        registerFogMaintenance();
+        registerLairAmbience();
+        registerQuests();
+        registerMythicWeapons();
+        registerTaming();
+        registerScaling();
 
-// ── Player Spawn (respawn) ──────────────────────────────────────────
+        // Prestige aura renderer (every second)
+        system.runInterval(() => {
+            try { tickPrestigeAuras(); } catch (e) { /* */ }
+        }, 20);
+    });
+}
+
+// ── Player Spawn (first join + respawn) ─────────────────────────────
+// playerJoin only exposes playerId/playerName in every 2.x API — it has no
+// Player object. playerSpawn is the supported hook and also carries
+// initialSpawn, which is exactly what the first-join welcome needs.
 world.afterEvents.playerSpawn.subscribe((event) => {
-    console.log(`[Realms of Myth] Player spawned: ${event.player.name}`);
-    restorePlayerState(event.player);
-});
-
-// ── Player Join (first time) ────────────────────────────────────────
-world.afterEvents.playerJoin.subscribe((event) => {
     const player = event.player;
+    restorePlayerState(player);
+
+    if (!event.initialSpawn) return;
+
     const hasChosen = player.getDynamicProperty('rom:has_chosen');
     const raceTag = player.getDynamicProperty('rom:race');
 
     if (!hasChosen && !raceTag) {
         system.runTimeout(() => {
-            player.sendMessage({
-                rawtext: [
-                    { text: '§6══════════════════════════════════\n' },
-                    { text: '§e§lWelcome to Realms of Myth!\n' },
-                    { text: '§7Speak with the Oracle or find the Ancient Altar.\n' },
-                    { text: '§7Type §a!class §7to open the class selection screen.\n' },
-                    { text: '§7Type §a!help §7for the full command list.\n' },
-                    { text: '§6══════════════════════════════════' }
-                ]
-            });
+            try {
+                player.sendMessage({
+                    rawtext: [
+                        { text: '§6══════════════════════════════════\n' },
+                        { text: '§e§lWelcome to Realms of Myth!\n' },
+                        { text: '§7Speak with the Oracle or find the Ancient Altar.\n' },
+                        { text: '§7Type §a!class §7to open the class selection screen.\n' },
+                        { text: '§7Type §a!help §7for the full command list.\n' },
+                        { text: '§6══════════════════════════════════' }
+                    ]
+                });
+            } catch (e) { /* player left during the delay */ }
         }, 40);
     }
 });
@@ -72,19 +85,16 @@ world.afterEvents.playerLeave.subscribe((event) => {
     // an extension point in case future per-player state needs cleanup.
 });
 
-// ── Entity Equip: re-check Class Master set bonus when armor changes ─
-// Without this, the bonus only kicks in on respawn. With this hook, equipping
-// the last piece of a Master set during gameplay applies the bonus live.
-try {
-    world.afterEvents.entityEquip.subscribe((event) => {
-        const player = event.entity;
-        if (!player || !player.getDynamicProperty) return;
-        // applyClassMasterBonuses re-evaluates the equipped armor
-        applyClassMasterBonuses(player);
-    });
-} catch (e) {
-    // entityEquip may not be available in all API versions; fail silently
-}
+// ── Class Master set bonus: live re-evaluation ──────────────────────
+// entityEquip is not part of @minecraft/server 2.4.0 (verified against the
+// 2.4.0 API reference), so the old try/catch subscription silently never ran
+// and the bonus only appeared after a respawn. A 5-second poll is cheap
+// (one equippable lookup per player) and works on every API version.
+system.runInterval(() => {
+    for (const player of world.getPlayers()) {
+        try { applyClassMasterBonuses(player); } catch (e) { /* transient */ }
+    }
+}, 100);
 
 // ── Item Use: Class Token pre-selection ───────────────────────────────
 // When a player right-clicks a class token, the class selection form opens
@@ -137,8 +147,9 @@ world.afterEvents.playerInteractWithEntity.subscribe((event) => {
     const target = event.target;
     if (!target) return;
 
-    // Oracle / Elf Warrior: click to open class selection
-    if (target.typeId === 'realms:elf_warrior') {
+    // Oracle / Elf Warrior: click to open class selection. Ritual elites use
+    // the same entity type as the Oracle, so skip anything tagged rom:elite.
+    if (target.typeId === 'realms:elf_warrior' && !target.hasTag('rom:elite')) {
         const raceTag = player.getDynamicProperty('rom:race');
         const hasChosen = player.getDynamicProperty('rom:has_chosen');
         if (raceTag && hasChosen) {
