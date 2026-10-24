@@ -21,6 +21,9 @@
     },
     "result": {
       "item": "realms:elven_dagger"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

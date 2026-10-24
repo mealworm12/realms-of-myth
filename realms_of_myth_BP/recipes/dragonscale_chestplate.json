@@ -19,6 +19,9 @@
     },
     "result": {
       "item": "realms:dragonscale_chestplate"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

@@ -33,6 +33,11 @@
       "spawn_egg": {
         "base_color": "0x808080",
         "overlay_color": "0x404040"
+      },
+      "sounds": {
+        "ambient": "entity.giant_colossus.ambient",
+        "hurt": "entity.giant_colossus.hurt",
+        "death": "entity.giant_colossus.death"
       }
     }
   }

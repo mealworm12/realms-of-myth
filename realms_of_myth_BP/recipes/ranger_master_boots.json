@@ -12,11 +12,18 @@
       "HWH"
     ],
     "key": {
-      "H": { "item": "realms:dragon_heart" },
-      "W": { "item": "realms:mythril_bow" }
+      "H": {
+        "item": "realms:dragon_heart"
+      },
+      "W": {
+        "item": "realms:mythril_bow"
+      }
     },
     "result": {
       "item": "realms:ranger_master_boots"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

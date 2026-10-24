@@ -19,6 +19,9 @@
     },
     "result": {
       "item": "realms:mythril_leggings"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

@@ -57,17 +57,6 @@
       "minecraft:loot": {
         "table": "loot_tables/entities/troll_brute.json"
       },
-      "minecraft:ambient_sound": {
-        "sound": "entity.troll.grunt",
-        "interval": 150,
-        "range": 10.0
-      },
-      "minecraft:hurt_sound": {
-        "sound": "entity.troll_brute.hurt"
-      },
-      "minecraft:death_sound": {
-        "sound": "entity.troll_brute.death"
-      },
       "minecraft:physics": {},
       "minecraft:pushable": {
         "is_pushable": true

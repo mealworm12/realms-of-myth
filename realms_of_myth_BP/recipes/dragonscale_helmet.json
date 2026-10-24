@@ -18,6 +18,9 @@
     },
     "result": {
       "item": "realms:dragonscale_helmet"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

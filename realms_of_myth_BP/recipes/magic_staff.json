@@ -25,6 +25,9 @@
     },
     "result": {
       "item": "realms:magic_staff"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

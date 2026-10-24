@@ -15,6 +15,9 @@
     ],
     "result": {
       "item": "realms:mythril_ingot"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

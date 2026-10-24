@@ -28,6 +28,9 @@
     },
     "result": {
       "item": "realms:shadowfang_dagger"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

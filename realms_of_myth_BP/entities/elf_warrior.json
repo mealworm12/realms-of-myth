@@ -53,7 +53,7 @@
               "event": "realms:player_interact",
               "target": "self"
             },
-            "interact_text": "§eSpeak with The Oracle",
+            "interact_text": "\u00a7eSpeak with The Oracle",
             "swing": true,
             "play_sounds": "random.orb"
           }
@@ -65,11 +65,6 @@
       "minecraft:loot": {
         "table": "loot_tables/entities/elf_warrior.json"
       },
-      "minecraft:ambient_sound": {
-        "sound": "entity.elf_warrior.ambient",
-        "interval": 100,
-        "range": 8.0
-      },
       "minecraft:physics": {},
       "minecraft:pushable": {
         "is_pushable": true,
@@ -79,16 +74,12 @@
     },
     "events": {
       "realms:player_interact": {
-        "sequence": [
-          {
-            "run_command": {
-              "command": [
-                "playsound random.orb @p"
-              ],
-              "target": "other"
-            }
-          }
-        ]
+        "queue_command": {
+          "command": [
+            "playsound random.orb @p"
+          ],
+          "target": "other"
+        }
       },
       "minecraft:entity_spawned": {}
     }

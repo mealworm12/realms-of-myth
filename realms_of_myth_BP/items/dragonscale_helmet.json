@@ -2,41 +2,40 @@
   "format_version": "1.21.60",
   "minecraft:item": {
     "description": {
-      "identifier": "realms:ranger_master_helmet",
+      "identifier": "realms:dragonscale_helmet",
       "menu_category": {
         "category": "equipment",
-        "group": "minecraft:helmet"
+        "group": "minecraft:itemGroup.name.helmet"
       }
     },
     "components": {
       "minecraft:max_stack_size": 1,
-      "minecraft:max_damage": 252,
-      "minecraft:protection": 3,
+      "minecraft:max_damage": 286,
       "minecraft:enchantable": {
-        "value": 15,
-        "slot": "armor"
+        "value": 20,
+        "slot": "armor_head"
       },
       "minecraft:repairable": {
         "repair_items": [
           {
             "items": [
-              "realms:mythril_ingot"
+              "realms:dragon_scale"
             ],
-            "repair_amount": 63
+            "repair_amount": 71
           }
         ]
       },
-      "minecraft:icon": "ranger_master_helmet",
+      "minecraft:icon": "dragonscale_helmet",
       "minecraft:display_name": {
-        "value": "Shadow Helmet"
+        "value": "Dragonscale Helmet"
       },
-      "minecraft:armor": 3,
       "minecraft:wearable": {
-        "slot": "slot.armor.head"
+        "slot": "slot.armor.head",
+        "protection": 4
       },
       "minecraft:tags": {
         "tags": [
-          "realms:ranger_armor"
+          "realms:dragonscale_armor"
         ]
       }
     }

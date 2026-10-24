@@ -22,6 +22,9 @@
     },
     "result": {
       "item": "realms:dragonslayer_spear"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

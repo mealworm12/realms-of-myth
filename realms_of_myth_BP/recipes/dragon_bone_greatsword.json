@@ -22,6 +22,9 @@
     },
     "result": {
       "item": "realms:dragon_bone_greatsword"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }
