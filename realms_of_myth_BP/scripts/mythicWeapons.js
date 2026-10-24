@@ -71,9 +71,12 @@ function procDawnbreaker(player, victim) {
 
     const dim = player.dimension;
     const loc = victim.location;
-    dim.runCommand(`execute at @e[type=${victim.typeId},c=1] run particle realms:holy_light_beam ~ ~1 ~`);
+    // Particle + AoE are centred on the victim's position. A bare Dimension
+    // command would resolve @e from the world origin instead.
     try { dim.spawnParticle('realms:holy_light_beam', loc); } catch (e) { /* */ }
-    dim.runCommand(`effect @e[r=${DAWNBREAKER_RADIUS},family=monster] instant_damage 2 3 true`);
+    try {
+        dim.runCommand(`execute positioned ${loc.x.toFixed(1)} ${loc.y.toFixed(1)} ${loc.z.toFixed(1)} run effect @e[r=${DAWNBREAKER_RADIUS},family=monster] instant_damage 2 3 true`);
+    } catch (e) { /* no target in range */ }
     player.playSound('realms.ability.smite_cast');
     player.sendMessage('§e☀ Dawnbreaker unleashes holy radiance!');
 }
@@ -113,10 +116,12 @@ function procStormcaller(player, victim) {
     player.dimension.runCommand(
         `execute positioned ${loc.x.toFixed(1)} ${loc.y.toFixed(1)} ${loc.z.toFixed(1)} run summon lightning_bolt`
     );
-    // Extra shockwave damage around the strike
-    player.dimension.runCommand(
-        `effect @e[r=4,family=monster] slowness 4 2 true`
-    );
+    // Extra shockwave damage around the strike (positioned at the impact).
+    try {
+        player.dimension.runCommand(
+            `execute positioned ${loc.x.toFixed(1)} ${loc.y.toFixed(1)} ${loc.z.toFixed(1)} run effect @e[r=4,family=monster] slowness 4 2 true`
+        );
+    } catch (e) { /* no target in range */ }
     player.playSound('ambient.weather.thunder');
     player.sendMessage('§b⚡ Stormcaller calls down the thunder!');
 }

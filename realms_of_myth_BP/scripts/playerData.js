@@ -106,15 +106,15 @@ export function applyRaceTraits(player) {
     // Use health_boost (adds 4 HP = 2 hearts) so the bonus is a true +max,
     // not a transient currentValue tweak that gets clobbered on first hit.
     if (traits.bonusHealth) {
-        const boostLevel = Math.max(1, Math.floor(traits.bonusHealth / 2));
+        // Health Boost grants +4 HP (2 hearts) per level — dividing by 2 here
+        // doubled the Troll's advertised +4 HP into +8.
+        const boostLevel = Math.max(1, Math.round(traits.bonusHealth / 4));
         player.runCommand(`effect @s health_boost 999999 ${boostLevel} true`);
-        // Also push current HP up to the new effective max so Troll spawns
-        // at full HP on first apply.
+        // Push current HP up to the new effective max so Troll spawns full.
         const health = player.getComponent('minecraft:health');
         if (health) {
-            const target = (health.effectiveMax || 20) + traits.bonusHealth;
-            if (health.currentValue < target) {
-                health.setCurrentValue(target);
+            if (health.currentValue < health.effectiveMax) {
+                health.setCurrentValue(health.effectiveMax);
             }
         }
     }

@@ -88,7 +88,8 @@ export function handleAltarRitual(player, block) {
         return true;
     }
 
-    // Nothing eligible — informational message
+    // Nothing eligible — informational message (handled here, so main.js does
+    // not append a second, contradictory "the Altar recognizes you" line).
     player.sendMessage({
         rawtext: [{
             text: '§6═══ The Ancient Altar ═══\n' +
@@ -97,7 +98,7 @@ export function handleAltarRitual(player, block) {
                   `§8Your level: ${xpLevel}${prestiged ? ` • Prestiges: ${prestiged}` : ''}`
         }]
     });
-    return false;
+    return true;
 }
 
 // ── Summoning ritual ───────────────────────────────────────────────
@@ -231,7 +232,7 @@ function showPrestigeForm(player) {
         .title('Ancient Altar: Class Prestige')
         .body(`You stand at level §e${xpLevel}§r as a §l${cls}§r.\n` +
               'Prestige resets your level to 1 but grants:\n' +
-              '§a+2 permanent maximum health\n' +
+              '§a+4 permanent maximum health (stacks)\n' +
               '§aAn eternal class-colored aura\n' +
               `§8Current prestiges: ${prestigeCount}`)
         .button('§d§lASCEND')
@@ -253,9 +254,11 @@ export function doPrestige(player, cls) {
     const prev = player.getDynamicProperty('rom:prestige_count') || 0;
     player.setDynamicProperty('rom:prestige_count', prev + 1);
 
-    // Permanent +2 HP (stacking across prestiges)
-    const hpBonus = 2 * (prev + 1);
-    const boostLevel = Math.max(1, Math.floor(hpBonus / 2));
+    // Permanent max HP: Health Boost is +4 HP per level, so each prestige
+    // grants one level (+4 HP) and the total stacks. (The old code divided a
+    // "+2 HP" target by 2 and produced +4 per level, i.e. double the claim.)
+    const hpBonusTotal = 4 * (prev + 1);
+    const boostLevel = prev + 1;
     player.runCommand(`effect @s health_boost 999999 ${boostLevel} true`);
 
     // Aura marker — main.js prestige loop renders particles periodically
@@ -264,7 +267,7 @@ export function doPrestige(player, cls) {
     player.dimension.spawnParticle('realms:class_select_burst', player.location);
     player.dimension.spawnParticle('realms:holy_light_beam', player.location);
     player.playSound('realms.ability.holy_light_cast');
-    player.sendMessage({ rawtext: [{ text: `§d✦ You have ASCENDED! Level reset to 1, +${hpBonus} permanent max HP, and an eternal ${cls} aura.` }] });
+    player.sendMessage({ rawtext: [{ text: `§d✦ You have ASCENDED! Level reset to 1, +4 permanent max HP (total +${hpBonusTotal}), and an eternal ${cls} aura.` }] });
 }
 
 /** Called from main.js interval: render prestige auras. */

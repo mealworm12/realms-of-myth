@@ -91,12 +91,15 @@ function getStage(player) {
 }
 
 function announceQuest(player, quest, done) {
-    const display = player.getComponent('minecraft:onScreenDisplay') ||
-                    player.getComponent('on_screen_display');
+    // Player.onScreenDisplay is the supported title API; the old
+    // `minecraft:onScreenDisplay` component does not exist in 2.x, so quest
+    // titles were never shown.
     try {
-        if (display && display.setTitle) {
-            display.setTitle(`§6§l${done ? 'Quest Complete!' : 'New Quest'}§r\n§e${quest.title}`);
-        }
+        player.onScreenDisplay.setTitle(`§6§l${done ? 'Quest Complete!' : 'New Quest'}§r\n§e${quest.title}`, {
+            fadeInDuration: 10,
+            stayDuration: 50,
+            fadeOutDuration: 10
+        });
     } catch (e) { /* title API may vary */ }
     if (done) {
         player.sendMessage({ rawtext: [{ text: `§6✔ §e§l${quest.title}§r §7— complete!` }] });

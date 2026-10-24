@@ -1,0 +1,52 @@
+name: verify
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: JSON + asset reference integrity
+        run: python3 tools/check_integration.py
+
+      - name: API contract, command origins, hooks, JS syntax
+        run: python3 tools/check_scripts.py
+
+      - name: Reproducible build
+        run: |
+          python3 build.py
+          sha256sum realms-of-myth.mcaddon > /tmp/first.sha
+          python3 build.py
+          sha256sum -c /tmp/first.sha
+
+      - name: Archive layout
+        run: |
+          python3 - <<'PY'
+          import json, zipfile
+          addon = zipfile.ZipFile("realms-of-myth.mcaddon")
+          assert set(addon.namelist()) == {"BP.mcpack", "RP.mcpack"}, addon.namelist()
+          for pack, module in (("BP.mcpack", "data"), ("RP.mcpack", "resources")):
+              inner = zipfile.ZipFile(__import__("io").BytesIO(addon.read(pack)))
+              manifest = json.loads(inner.read("manifest.json"))
+              types = {m["type"] for m in manifest["modules"]}
+              assert module in types, (pack, types)
+              assert inner.testzip() is None, pack
+          print("archive layout OK")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: realms-of-myth-mcaddon
+          path: realms-of-myth.mcaddon

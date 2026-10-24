@@ -56,12 +56,18 @@ export function registerScaling() {
 
             const hp = entity.getComponent('minecraft:health');
             if (hp) {
-                const newMax = Math.round(hp.effectiveMax * tier.mult);
+                const baseMax = hp.effectiveMax;
+                const newMax = Math.round(baseMax * tier.mult);
                 hp.resetToMaxValue();
-                // Boost current+max via health_boost effect proxy
-                const boostLevel = Math.max(1, Math.round(newMax / 4));
-                try { entity.runCommand(`effect @s health_boost 999999 ${Math.min(boostLevel - 1, 4)} true`); } catch (e) { /* */ }
-                try { hp.setCurrentValue(Math.min(newMax, hp.effectiveMax)); } catch (e) { /* */ }
+                // Health Boost is +4 HP per level; cap at level 9 so scaled
+                // mobs stay within the effect's intended range instead of
+                // silently flattening every tier to the same cap.
+                const extraHp = Math.max(0, newMax - baseMax);
+                const boostLevel = Math.min(9, Math.floor(extraHp / 4));
+                if (boostLevel > 0) {
+                    try { entity.runCommand(`effect @s health_boost 999999 ${boostLevel} true`); } catch (e) { /* */ }
+                }
+                try { hp.setCurrentValue(newMax); } catch (e) { /* clamps to max */ }
             }
 
             // Damage scaling proxy via strength effect
