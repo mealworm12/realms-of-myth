@@ -74,7 +74,7 @@ Craft them at the crafting table with Nether Star cores, Dragon Hearts and Mythr
 
 ### ✨ Gameplay Expansion Systems
 
-- **📜 Chronicles of the Realm (quest chain)** — 8 progressive quests: kill quests (whelp, troll, giant, dragon), collect quests (mythril, dragon heart), craft/wear milestones. Rewards include loot, XP levels, title messages and sound stings. Track progress with `!quest`.
+- **📜 Chronicles of the Realm (quest chain)** — 8 progressive quests: kill quests (whelp, troll, giant, dragon), collect quests (mythril, dragon heart), craft/wear milestones. Rewards include loot, XP levels, title messages and sound stings. Track progress from the **Oracle** menu.
 - **🐉 Dragon taming & riding** — bring an adult Fire or Frost Dragon below 30% HP to make it tameable, feed it Mythril Ingots to earn its loyalty, saddle it, and ride it with view-direction steering. Right-click any item while mounted to unleash a breath attack (6s cooldown). Dragon whelps from enraged dragons may imprint as follow/sit pets.
 - **🔮 Ancient Altar rituals** — right-click the altar with 1 Dragon Heart + 4 Mythril Ingots to summon an elite guardian wave (3 buffed, glowing, named mobs). Slay all three to choose a guaranteed Mythic weapon via UI picker.
 - **🌍 Difficulty scaling** — hostile mobs scale HP/damage by distance from world spawn: <2k blocks ×1.0, 2k–8k ×1.5, >8k ×2.25.
@@ -111,17 +111,24 @@ Craft them at the crafting table with Nether Star cores, Dragon Hearts and Mythr
 4. **Important:** Enable **Beta APIs** under Experiments (required for scripting)
 5. Start the world!
 
-### Player Commands
+### Oracle Menu
 
-| Command | Action |
+Interact with the **Oracle** (or an Ancient Altar once your destiny is sealed) to open:
+
+| Option | Action |
 |---------|--------|
-| `!class` or `!choose` | Open race/class selection UI |
-| `!classinfo` | View your current class + all abilities + race passives |
-| `!reset` | Reset your class/race and choose again |
-| `!help` or `!commands` | Show the full command list in chat |
+| **Class & Abilities** | View your class, all three abilities and your race passives |
+| **Current Quest** | Show your current Chronicle quest and progress |
+| **Reset Destiny** | Clear your class/race and choose again |
+| **Help** | Controls, ability items and altar instructions |
+
+> **Why not chat commands?** Bedrock's script API no longer exposes the chat
+> event (`chatSend` is absent in every module version on 1.26.x), so `!class`
+> and friends cannot work. The Oracle menu replaces them. Server operators can
+> still run `/scriptevent realms:cmd classinfo` (and `reset`, `quest`, `help`).
 
 ### How to Play
-1. Find an **Ancient Altar** (rare structure) or use `!class` to open the selection screen
+1. Find an **Ancient Altar** (rare structure) or talk to the **Oracle** to open the selection screen
 2. Pick your **race** (Elf, Troll, Giant, Human) → then your **class** (Mage, Ranger, Berserker, Paladin, Druid)
 3. Confirm — your race passives are applied immediately
 4. Use abilities in combat by holding Nether Star / Blaze Powder / Ghast Tear + right-click
@@ -179,7 +186,7 @@ All 20 Class Master armor pieces (5 sets × 4 pieces) are craftable. Every recip
 
 This add-on should work alongside most other add-ons, but watch out for:
 
-- **Other class/race mods** — conflicts likely on `!class`, `!reset`, dynamic property names starting with `rom:`
+- **Other class/race mods** — conflicts likely on Oracle interaction, altar rituals, and dynamic property names starting with `rom:`
 - **Custom NPC mods** — the Elf Warrior uses vanilla `behavior.nearest_attackable_target`; heavy NPC mods may override AI
 - **World edit / NBT editor tools** — modifying custom entity data via NBT can break AI state tracking (the `managedDragons` Map in `dragonBoss.js`)
 - **Mods that override `minecraft:health` component** — our class bonuses (e.g. +25% damage on low HP) hook into this component
@@ -286,9 +293,30 @@ Phase 12: Ascension Program       ███████████████�
 
 ## 📝 Changelog
 
+### 🛠️ v1.0.1 — Production Pass (October 2026)
+
+Verified by booting the pack on **Bedrock Dedicated Server 1.26.52.3** (headless, content logging on), not just static checks.
+
+**Boot / script API**
+- `world.afterEvents.worldInitialize` → `worldLoad` (removed in API 2.x); the module now evaluates and `World loaded` fires.
+- `playerJoin` carries no Player object in 2.x → the first-join welcome moved to `playerSpawn(initialSpawn)`.
+- `entityEquip` is absent in 2.4.0 → Class Master bonuses are re-evaluated on a 5-second poll.
+- `chatSend` is absent in **every** script-module version on 1.26 → the Oracle menu replaces `!class` / `!quest` / `!reset`; operators can still use `/scriptevent realms:cmd <command>`.
+- `@minecraft/server-ui` raised to 2.0.0 (1.2.0 is not exposed by current engines).
+
+**Content**
+- All 28 armor pieces moved from `armor/` to `items/` — Bedrock never loads that folder, so the armor tier and every armor recipe were missing in-game.
+- Armor items migrated to the 1.21.60 schema: `minecraft:armor` removed, defence via `wearable.protection`, per-piece enchantable slots.
+- All 42 recipes given `unlock` data (required since 1.20).
+- `mythril_ore` menu group namespaced (`minecraft:itemGroup.name.ore`).
+- Mob audio moved from invalid BP sound components to RP client-entity `sounds`; the Oracle interaction uses `queue_command`.
+
+**Tooling**
+- `tools/check_content.py` encodes every rule above; CI runs it alongside the API-contract checks.
+
 ### ✨ v1.0.0 "Ascension" — Full Release
 
-- **📜 Chronicles of the Realm (quest chain)** — 8 progressive quests: kill quests (whelp, troll, giant, dragon), collect quests (mythril, dragon heart), craft/wear milestones. Rewards include loot, XP levels, title messages and sound stings. Track progress with `!quest`.
+- **📜 Chronicles of the Realm (quest chain)** — 8 progressive quests: kill quests (whelp, troll, giant, dragon), collect quests (mythril, dragon heart), craft/wear milestones. Rewards include loot, XP levels, title messages and sound stings. Track progress from the **Oracle** menu.
 - **🗡️ Mythic weapon tier (T5)** — Dawnbreaker (radiant smite AoE), Void Reaver (shadow-step teleport), Stormcaller Hammer (real lightning per hit). Full items, recipes, geo models, attachables, textures and script procs.
 - **🐉 Dragon taming & riding** — bring an adult Fire or Frost Dragon below 30% HP, earn its loyalty with Mythril Ingots, saddle it and ride with view-direction steering. Breath attack on demand (6s cooldown). Whelps may imprint as follow/sit pets.
 - **🔮 Ancient Altar rituals & class prestige** — sacrifice a Dragon Heart + 4 Mythril Ingots to summon 3 elite guardians; slay them to choose a guaranteed Mythic weapon. Reach level 30 and touch the altar to prestige for permanent stacking max HP + class-colored aura.
@@ -299,7 +327,7 @@ Phase 12: Ascension Program       ███████████████�
 - **🧰 Quality** — integration integrity checker (`check_integration.py`), all JSON validated, texture-key and lang completeness verified.
 
 ### v0.3.0 — Gameplay Expansion (merged into v1.0.0)
-- **Quest system:** 8-quest "Chronicles of the Realm" chain with kill/collect/craft/boss objectives, loot + XP rewards, titles and sound stings (`scripts/quests.js`, `!quest` command)
+- **Quest system:** 8-quest "Chronicles of the Realm" chain with kill/collect/craft/boss objectives, loot + XP rewards, titles and sound stings (`scripts/quests.js`, Oracle menu)
 - **Mythic tier:** Dawnbreaker, Void Reaver, Stormcaller Hammer — items, recipes, geo models, attachables, render controllers, textures (`texture-sources/gen_mythic_aaa.py`) and script procs (`scripts/mythicWeapons.js`)
 - **Dragon taming & riding** with breath attack + whelp pets (`scripts/dragonRiding.js`)
 - **Ancient Altar rituals:** elite guardian wave → Mythic weapon picker; class prestige at level 30+ (`scripts/altar.js`)
@@ -313,7 +341,7 @@ Phase 12: Ascension Program       ███████████████�
 - **Dragon Whelp** now drops 1-2 Dragon Scales (loot table added)
 - **Elf Warrior** now drops Elven Daggers (loot table added)
 - **Class Master bonuses** now apply live on `entityEquip` (no need to respawn to see them activate)
-- **`!reset`** now clears all common potion effects (absorption, fire_resistance, invisibility, water_breathing, debuffs)
+- **Reset Destiny** (formerly `!reset`) now clears all common potion effects (absorption, fire_resistance, invisibility, water_breathing, debuffs)
 - **API/manifest alignment:** all loot tables and equipment tables use correct schemas
 - **16 low-priority fixes:** documentation (Changelog, Game Mode, Incompatibilities, Performance), dead code removal in `config.js` and `classSystem.js`, structure & dialogue files
 - Total: **25 issues closed** from the comprehensive gap audit

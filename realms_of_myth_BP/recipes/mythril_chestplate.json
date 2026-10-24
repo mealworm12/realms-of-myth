@@ -19,6 +19,9 @@
     },
     "result": {
       "item": "realms:mythril_chestplate"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

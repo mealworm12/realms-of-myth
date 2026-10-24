@@ -12,11 +12,18 @@
       "HIH"
     ],
     "key": {
-      "H": { "item": "realms:dragon_heart" },
-      "I": { "item": "realms:mythril_ingot" }
+      "H": {
+        "item": "realms:dragon_heart"
+      },
+      "I": {
+        "item": "realms:mythril_ingot"
+      }
     },
     "result": {
       "item": "realms:paladin_master_helmet"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

@@ -2,19 +2,18 @@
   "format_version": "1.21.60",
   "minecraft:item": {
     "description": {
-      "identifier": "realms:mage_master_leggings",
+      "identifier": "realms:druid_master_helmet",
       "menu_category": {
         "category": "equipment",
-        "group": "minecraft:leggings"
+        "group": "minecraft:itemGroup.name.helmet"
       }
     },
     "components": {
       "minecraft:max_stack_size": 1,
-      "minecraft:max_damage": 345,
-      "minecraft:protection": 6,
+      "minecraft:max_damage": 252,
       "minecraft:enchantable": {
         "value": 15,
-        "slot": "armor"
+        "slot": "armor_head"
       },
       "minecraft:repairable": {
         "repair_items": [
@@ -22,21 +21,21 @@
             "items": [
               "realms:mythril_ingot"
             ],
-            "repair_amount": 86
+            "repair_amount": 63
           }
         ]
       },
-      "minecraft:icon": "mage_master_leggings",
+      "minecraft:icon": "druid_master_helmet",
       "minecraft:display_name": {
-        "value": "Arcane Leggings"
+        "value": "Wildheart Helmet"
       },
-      "minecraft:armor": 6,
       "minecraft:wearable": {
-        "slot": "slot.armor.legs"
+        "slot": "slot.armor.head",
+        "protection": 3
       },
       "minecraft:tags": {
         "tags": [
-          "realms:mage_armor"
+          "realms:druid_armor"
         ]
       }
     }

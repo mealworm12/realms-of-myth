@@ -4,19 +4,30 @@
     "description": {
       "identifier": "realms:void_reaver_craft"
     },
-    "tags": ["crafting_table"],
+    "tags": [
+      "crafting_table"
+    ],
     "pattern": [
       " N",
       "M ",
       "S "
     ],
     "key": {
-      "N": { "item": "minecraft:nether_star" },
-      "M": { "item": "realms:mythril_ingot" },
-      "S": { "item": "realms:shadowfang_dagger" }
+      "N": {
+        "item": "minecraft:nether_star"
+      },
+      "M": {
+        "item": "realms:mythril_ingot"
+      },
+      "S": {
+        "item": "realms:shadowfang_dagger"
+      }
     },
     "result": {
       "item": "realms:void_reaver"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

@@ -35,6 +35,11 @@
       "spawn_egg": {
         "base_color": "0xB03A2E",
         "overlay_color": "0xF5B041"
+      },
+      "sounds": {
+        "ambient": "entity.dragon_fire.roar",
+        "hurt": "entity.dragon_fire.hurt",
+        "death": "entity.dragon_fire.death"
       }
     }
   }

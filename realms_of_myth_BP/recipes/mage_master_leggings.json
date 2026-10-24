@@ -13,11 +13,18 @@
       "F F"
     ],
     "key": {
-      "H": { "item": "realms:dragon_heart" },
-      "F": { "item": "realms:frost_essence" }
+      "H": {
+        "item": "realms:dragon_heart"
+      },
+      "F": {
+        "item": "realms:frost_essence"
+      }
     },
     "result": {
       "item": "realms:mage_master_leggings"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

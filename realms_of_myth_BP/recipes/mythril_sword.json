@@ -22,6 +22,9 @@
     },
     "result": {
       "item": "realms:mythril_sword"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

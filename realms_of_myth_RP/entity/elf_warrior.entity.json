@@ -35,6 +35,11 @@
       "spawn_egg": {
         "base_color": "0x8FBC8F",
         "overlay_color": "0x2E5E2E"
+      },
+      "sounds": {
+        "ambient": "entity.elf_warrior.ambient",
+        "hurt": "entity.elf_warrior.hurt",
+        "death": "entity.elf_warrior.death"
       }
     }
   }

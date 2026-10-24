@@ -7,17 +7,18 @@
  */
 
 import { world, system } from '@minecraft/server';
-import { CLASSES, RACES } from './classSystem.js';
-import { restorePlayerState, resetPlayerData, loadPlayerData, applyClassMasterBonuses } from './playerData.js';
+import { CLASSES } from './classSystem.js';
+import { restorePlayerState, applyClassMasterBonuses } from './playerData.js';
 import { showClassSelectionForm } from './classSelection.js';
 import { registerAbilities } from './abilities.js';
 import { registerDragonAI, registerFogMaintenance, registerLairAmbience } from './dragonBoss.js';
-import { registerQuests, startQuestChain, questStatus } from './quests.js';
+import { registerQuests, questStatus } from './quests.js';
 import { registerMythicWeapons } from './mythicWeapons.js';
 import { registerTaming, tryBreathAttack } from './dragonRiding.js';
 import { handleAltarRitual } from './altar.js';
 import { tickPrestigeAuras } from './altar.js';
 import { registerScaling } from './difficultyScaling.js';
+import { showCommandMenu, sendClassInfo, sendHelp, resetDestiny } from './commands.js';
 
 console.log('[Realms of Myth] Initializing...');
 
@@ -153,9 +154,9 @@ world.afterEvents.playerInteractWithEntity.subscribe((event) => {
         const raceTag = player.getDynamicProperty('rom:race');
         const hasChosen = player.getDynamicProperty('rom:has_chosen');
         if (raceTag && hasChosen) {
-            const cls = player.getDynamicProperty('rom:class');
-            const clsData = CLASSES[cls];
-            player.sendMessage(`§7The Oracle: §eYou walk the path of the §l${raceTag} ${clsData ? clsData.name : cls}§r§e. §7Use §e!reset §7to begin anew.`);
+            // Chat commands are unavailable on current Bedrock; the Oracle is
+            // the player-facing menu (class info, quest, reset, help).
+            showCommandMenu(player);
         } else {
             player.sendMessage('§6The Oracle opens the Scroll of Destiny...');
             system.runTimeout(() => showClassSelectionForm(player), 5);
@@ -193,12 +194,18 @@ world.afterEvents.playerInteractWithBlock.subscribe((event) => {
 });
 
 // ── Chat Commands ──────────────────────────────────────────────────
-world.beforeEvents.chatSend.subscribe((event) => {
-    const player = event.sender;
-    const msg = event.message.trim().toLowerCase();
+// `chatSend` is a *before* event only on newer API versions; 2.4.0 exposes
+// only world.afterEvents.chatSend. Support both (cancelling when possible),
+// plus /scriptevent realms:cmd <command> which works on every version.
+function handleChatCommand(player, rawMessage, cancellableEvent) {
+    const msg = String(rawMessage || '').trim().toLowerCase();
+    const consume = () => {
+        if (cancellableEvent) cancellableEvent.cancel = true;
+        return true;
+    };
 
     if (msg === '!class' || msg === '!choose') {
-        event.cancel = true;
+        consume();
         const raceTag = player.getDynamicProperty('rom:race');
         if (raceTag && player.getDynamicProperty('rom:has_chosen')) {
             player.sendMessage('§cYou have already chosen a class! Use §e!reset §cto start over.');
@@ -206,52 +213,41 @@ world.beforeEvents.chatSend.subscribe((event) => {
             showClassSelectionForm(player);
         }
     } else if (msg === '!reset') {
-        event.cancel = true;
-        resetPlayerData(player);
-        system.runTimeout(() => showClassSelectionForm(player), 20);
+        consume();
+        resetDestiny(player);
     } else if (msg === '!classinfo') {
-        event.cancel = true;
-        const data = loadPlayerData(player);
-        if (!data) {
-            player.sendMessage("§cYou haven't chosen a class yet! Use §e!class");
-            return;
-        }
-        const cls = CLASSES[data.class];
-        if (!cls) return;
-        const race = RACES[data.race];
-        player.sendMessage({ rawtext: [{ text: `§6═══ §e${cls.name} §7(${race ? race.name : data.race}) §6═══\n` }] });
-        cls.abilities.forEach((a, i) => {
-            player.sendMessage({
-                rawtext: [{ text: `§b${i + 1}. ${a.name} §8- §7${a.description} §8(${Math.round(a.cooldown / 20)}s cooldown)` }]
-            });
-        });
-        // Active race passives
-        if (race) {
-            player.sendMessage({ rawtext: [{ text: '§6— Race passives —' }] });
-            for (const [k, v] of Object.entries(race.traits)) {
-                if (k === 'baseHealth') continue;
-                player.sendMessage({ rawtext: [{ text: `  §7• §e${k}§7: ${typeof v === 'boolean' ? v : v}` }] });
-            }
-        }
+        consume();
+        sendClassInfo(player);
     } else if (msg === '!quest') {
-        event.cancel = true;
+        consume();
         questStatus(player);
     } else if (msg === '!help' || msg === '!commands') {
-        event.cancel = true;
-        player.sendMessage({
-            rawtext: [
-                { text: '§6═══ §eRealms of Myth §6═══\n' },
-                { text: '§a!class §7/ §a!choose §7— open race & class selection\n' },
-                { text: '§a!classinfo §7— show your class abilities + race passives\n' },
-                { text: '§a!reset §7— reset your race & class (re-pick)\n' },
-                { text: '§a!quest §7— show your current Chronicle quest\n' },
-                { text: '§a!help §7— show this list\n' },
-                { text: '§7Abilities: hold Nether Star (☆), Blaze Powder (🔥), Ghast Tear (💧) + right-click\n' },
-                { text: '§7Find the Ancient Altar or speak to the Oracle to start.\n' },
-                { text: '§7Use Class Tokens (dropped by Ancient Altar) to instantly pre-select a class.' }
-            ]
-        });
+        consume();
+        sendHelp(player);
+    } else {
+        return false;
     }
+    return true;
+}
+
+const chatBefore = world.beforeEvents?.chatSend;
+const chatAfter = world.afterEvents.chatSend;
+if (chatBefore) {
+    chatBefore.subscribe((event) => handleChatCommand(event.sender, event.message, event));
+    console.log('[Realms of Myth] Chat commands: before-event (messages suppressed)');
+} else if (chatAfter) {
+    chatAfter.subscribe((event) => handleChatCommand(event.sender, event.message, null));
+    console.log('[Realms of Myth] Chat commands: after-event fallback (message text remains visible)');
+} else {
+    console.warn('[Realms of Myth] No chat event available; use /scriptevent realms:cmd <command>');
+}
+
+// Version-independent command channel: /scriptevent realms:cmd !class
+system.afterEvents.scriptEventReceive.subscribe((event) => {
+    if (event.id !== 'realms:cmd') return;
+    const player = event.sourceEntity;
+    if (!player || player.typeId !== 'minecraft:player') return;
+    handleChatCommand(player, event.message, null);
 });
 
 // ── Register ability system (event subscriptions + cooldowns) ──────

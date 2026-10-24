@@ -1,10 +1,26 @@
+# 🏰 Realms of Myth 1.0.1 — Production Pass
+
+1.0.1 makes the pack actually run on current Minecraft. It was verified by booting it on a headless **Bedrock Dedicated Server 1.26.52.3** with content logging, which exposed failures no JSON validator catches.
+
+## 🛠️ Why 1.0.1 exists
+
+- **The scripts could not load.** The pack subscribed to `worldInitialize` (removed in API 2.x) and used a `playerJoin` field that no longer exists. Fixed to `worldLoad` + `playerSpawn`.
+- **The armor was never in the game.** All 28 armor definitions lived in an `armor/` folder, which Bedrock does not load. They are now in `items/`, migrated to the 1.21.60 item schema.
+- **Every armor recipe failed.** Missing item identifiers plus missing `unlock` data meant none of the 42 recipes could resolve.
+- **The Oracle event was malformed**, and mob audio used BP components that were removed from the schema.
+- **Chat commands cannot work.** `chatSend` is absent from every script-module version on 1.26; the Oracle now opens a menu (class info, quest, reset, help), with `/scriptevent realms:cmd` for operators.
+
+Server-side and content rules are now enforced by `tools/check_content.py` in CI.
+
+---
+
 # 🏰 Realms of Myth 1.0.0 — Ascension
 
 The full release of the Realms of Myth fantasy RPG add-on for Minecraft Bedrock & Education Edition. Everything below is in the box: custom art, particles, audio, and game systems — no vanilla placeholders left behind.
 
 ## ✨ New in 1.0.0 "Ascension"
 
-- **📜 Chronicles of the Realm** — an 8-quest progressive chain (kills, collects, crafting & boss milestones) with loot, XP, titles and sound stings. Track it with `!quest`.
+- **📜 Chronicles of the Realm** — an 8-quest progressive chain (kills, collects, crafting & boss milestones) with loot, XP, titles and sound stings. Track it from the Oracle menu.
 - **🗡️ Mythic weapon tier (T5)** — ☀️ Dawnbreaker (radiant AoE smite), 🌑 Void Reaver (shadow-step behind your target), ⚡ Stormcaller Hammer (a real lightning bolt on every hit). Crafted from Nether Star cores, Dragon Hearts and Mythril.
 - **🐉 Dragon taming & riding** — weaken a Fire or Frost Dragon below 30% HP, win its loyalty with Mythril Ingots, saddle up and steer with your view. Breath attack on demand; whelps can imprint as pets.
 - **🔮 Ancient Altar rituals & class prestige** — sacrifice a Dragon Heart + 4 Mythril to summon three elite guardians; defeat them for a guaranteed Mythic weapon. Prestige at level 30+ for permanent stacking max HP and an eternal class-colored aura.

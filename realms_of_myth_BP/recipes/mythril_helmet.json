@@ -18,6 +18,9 @@
     },
     "result": {
       "item": "realms:mythril_helmet"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

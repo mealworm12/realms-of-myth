@@ -4,19 +4,30 @@
     "description": {
       "identifier": "realms:stormcaller_hammer_craft"
     },
-    "tags": ["crafting_table"],
+    "tags": [
+      "crafting_table"
+    ],
     "pattern": [
       "NMN",
       " S ",
       " S "
     ],
     "key": {
-      "N": { "item": "minecraft:nether_star" },
-      "M": { "item": "realms:mythril_ingot" },
-      "S": { "item": "realms:troll_warhammer" }
+      "N": {
+        "item": "minecraft:nether_star"
+      },
+      "M": {
+        "item": "realms:mythril_ingot"
+      },
+      "S": {
+        "item": "realms:troll_warhammer"
+      }
     },
     "result": {
       "item": "realms:stormcaller_hammer"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }

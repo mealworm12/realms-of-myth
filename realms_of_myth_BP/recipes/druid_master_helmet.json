@@ -12,11 +12,18 @@
       "HEH"
     ],
     "key": {
-      "H": { "item": "realms:dragon_heart" },
-      "E": { "item": "realms:fire_essence" }
+      "H": {
+        "item": "realms:dragon_heart"
+      },
+      "E": {
+        "item": "realms:fire_essence"
+      }
     },
     "result": {
       "item": "realms:druid_master_helmet"
+    },
+    "unlock": {
+      "context": "AlwaysUnlocked"
     }
   }
 }
